@@ -30,11 +30,18 @@ jobs:
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
 
+      - name: Verify frontend
+        run: |
+          echo "Frontend files:"
+          ls -la frontend
+          echo "Index file:"
+          ls -la frontend/index.html
+
       - name: Upload frontend
         uses: actions/upload-pages-artifact@v4
         with:
           path: "./frontend"
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy frontend
         id: deployment
         uses: actions/deploy-pages@v4
