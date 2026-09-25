@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#1E3A5F" />
+<title>Smart Classroom &amp; Timetable Scheduler</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231E3A5F'/%3E%3Ctext x='50' y='68' font-size='55' text-anchor='middle' fill='white' font-family='Arial'%3ES%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ============ TOAST CONTAINER ============ -->
+<div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<!-- ============ LOGIN PAGE ============ -->
+<main id="login-page" class="login-page">
+  <div class="login-shell">
+    <section class="login-brand" aria-hidden="true">
+      <div class="brand-mark">
+        <span class="brand-glyph">S</span>
+      </div>
+      <h1>Smart Classroom &amp; Timetable Scheduler</h1>
+      <p>One shared source of truth for classes, teachers, rooms and time &mdash; built to catch clashes before they happen.</p>
+      <ul class="brand-points">
+        <li>Automatic teacher, room &amp; class clash detection</li>
+        <li>One-click conflict-free timetable generation</li>
+        <li>Live dashboard, calendar &amp; analytics</li>
+      </ul>
+    </section>
+
+    <section class="login-card" aria-labelledby="login-heading">
+      <div class="login-card-head">
+        <div class="brand-mark small"><span class="brand-glyph">S</span></div>
+        <div>
+          <h2 id="login-heading">Sign in</h2>
+          <p class="muted">Access your scheduling workspace</p>
+        </div>
+      </div>
+
+      <form id="login-form" novalidate>
+        <div class="field">
+          <label for="login-email">Email or username</label>
+          <input type="text" id="login-email" name="email" placeholder="admin@brightfield.edu" autocomplete="username" required />
+          <small class="field-error" id="login-email-error"></small>
+        </div>
+        <div class="field">
+          <label for="login-password">Password</label>
+          <div class="password-wrap">
+            <input type="password" id="login-password" name="password" placeholder="Enter your password" autocomplete="current-password" required />
+            <button type="button" class="ghost-icon-btn" id="toggle-password" aria-label="Show password">👁</button>
+          </div>
+          <small class="field-error" id="login-password-error"></small>
+        </div>
+        <div class="field-row">
+          <label class="checkbox-label">
+            <input type="checkbox" id="remember-me" />
+            <span>Remember me</span>
+          </label>
+          <button type="button" class="link-btn" id="demo-login-btn">Use demo login</button>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+        <p class="login-hint">Demo credentials: <strong>admin@brightfield.edu</strong> / <strong>admin123</strong></p>
+      </form>
+    </section>
+  </div>
+</main>
+
+<!-- ============ APP SHELL ============ -->
+<div id="app-shell" class="app-shell hidden">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar" aria-label="Primary navigation">
+    <div class="sidebar-head">
+      <div class="brand-mark small"><span class="brand-glyph">S</span></div>
+      <span class="sidebar-title">Scheduler</span>
+      <button class="icon-btn sidebar-close" id="sidebar-close" aria-label="Close menu">✕</button>
+    </div>
+    <ul class="nav-list">
+      <li><a href="#dashboard" class="nav-link" data-section="dashboard"><span class="nav-ico">🏠</span>Dashboard</a></li>
+      <li><a href="#timetable" class="nav-link" data-section="timetable"><span class="nav-ico">🗓</span>Timetable</a></li>
+      <li><a href="#generate" class="nav-link" data-section="generate"><span class="nav-ico">⚙️</span>Generate Timetable</a></li>
+      <li><a href="#classes" class="nav-link" data-section="classes"><span class="nav-ico">🎓</span>Classes</a></li>
+      <li><a href="#teachers" class="nav-link" data-section="teachers"><span class="nav-ico">🧑‍🏫</span>Teachers</a></li>
+      <li><a href="#subjects" class="nav-link" data-section="subjects"><span class="nav-ico">📘</span>Subjects</a></li>
+      <li><a href="#classrooms" class="nav-link" data-section="classrooms"><span class="nav-ico">🏛</span>Classrooms</a></li>
+      <li><a href="#calendar" class="nav-link" data-section="calendar"><span class="nav-ico">📅</span>Calendar</a></li>
+      <li><a href="#analytics" class="nav-link" data-section="analytics"><span class="nav-ico">📊</span>Analytics</a></li>
+      <li><a href="#announcements" class="nav-link" data-section="announcements"><span class="nav-ico">📣</span>Announcements</a></li>
+      <li><a href="#notifications" class="nav-link" data-section="notifications"><span class="nav-ico">🔔</span>Notifications <span class="pill pill-count hidden" id="sidebar-notif-count">0</span></a></li>
+      <li><a href="#audit" class="nav-link" data-section="audit"><span class="nav-ico">🕘</span>Audit Log</a></li>
+      <li><a href="#settings" class="nav-link" data-section="settings"><span class="nav-ico">⚙</span>Settings</a></li>
+    </ul>
+    <div class="sidebar-foot">
+      <button class="btn btn-ghost btn-block" id="logout-btn">Log out</button>
+    </div>
+  </nav>
+
+  <div class="app-main">
+    <!-- TOP HEADER -->
+    <header class="topbar">
+      <button class="icon-btn" id="sidebar-open" aria-label="Open menu">☰</button>
+      <div class="topbar-search">
+        <span aria-hidden="true">🔎</span>
+        <input type="search" id="global-search" placeholder='Ask the Scheduler — try "free rooms Monday 10am" or a teacher name' aria-label="Global and smart search" />
+      </div>
+      <button class="btn btn-secondary cmdk-trigger" id="cmdk-open-btn" title="Open command palette">⌘K <span class="muted small">Quick actions</span></button>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
+        <button class="icon-btn" id="notif-bell" aria-label="Notifications" title="Notifications">
+          🔔<span class="notif-dot hidden" id="notif-dot"></span>
+        </button>
+        <div class="profile-chip">
+          <div class="avatar" id="profile-avatar">A</div>
+          <div class="profile-meta">
+            <strong id="profile-name">Admin User</strong>
+            <span id="profile-role">Administrator</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- GLOBAL SEARCH RESULTS DROPDOWN -->
+    <div id="search-results" class="search-results hidden"></div>
+
+    <main class="content" id="content">
+
+      <!-- DASHBOARD -->
+      <section class="page" id="section-dashboard" data-page="dashboard">
+        <div class="page-head">
+          <div>
+            <h1>Dashboard</h1>
+            <p class="muted">Overview of your institution's scheduling health</p>
+          </div>
+          <div class="page-head-actions">
+            <span class="badge badge-soft" id="dash-date"></span>
+          </div>
+        </div>
+
+        <div class="stat-grid" id="stat-grid"></div>
+
+        <div class="card health-card">
+          <div class="card-head">
+            <h2>Timetable Health Score</h2>
+            <span class="muted small">Conflict-free rate + teacher workload balance + room-usage balance</span>
+          </div>
+          <div class="health-body" id="health-body"></div>
+        </div>
+
+        <div class="dash-grid">
+          <div class="card">
+            <div class="card-head">
+              <h2>Today's Classes</h2>
+              <span class="muted small" id="today-label"></span>
+            </div>
+            <div id="today-classes-list" class="list-simple"></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h2>Upcoming Classes</h2>
+              <span class="muted small">Next on the schedule</span>
+            </div>
+            <div id="upcoming-classes-list" class="list-simple"></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h2>Conflicts</h2>
+              <span class="muted small" id="conflict-count-label"></span>
+            </div>
+            <div id="dash-conflicts-list" class="list-simple"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TIMETABLE -->
+      <section class="page hidden" id="section-timetable" data-page="timetable">
+        <div class="page-head">
+          <div>
+            <h1>Timetable Management</h1>
+            <p class="muted">Full weekly grid with clash-aware editing — drag any class onto a new day/slot to reschedule it</p>
+          </div>
+          <div class="page-head-actions">
+            <button class="btn btn-secondary" id="tt-print-btn">🖨 Print</button>
+            <button class="btn btn-secondary" id="tt-export-btn">⬇ Export CSV</button>
+            <button class="btn btn-secondary" id="tt-export-ics-btn">📅 Export to Calendar</button>
+            <button class="btn btn-primary" id="tt-add-btn">+ Add Entry</button>
+          </div>
+        </div>
+
+        <div class="filter-bar card">
+          <div class="field-inline">
+            <label for="filter-class">Class</label>
+            <select id="filter-class"><option value="">All classes</option></select>
+          </div>
+          <div class="field-inline">
+            <label for="filter-teacher">Teacher</label>
+            <select id="filter-teacher"><option value="">All teachers</option></select>
+          </div>
+          <div class="field-inline">
+            <label for="filter-room">Room</label>
+            <select id="filter-room"><option value="">All rooms</option></select>
+          </div>
+          <div class="field-inline">
+            <label for="filter-day">Day</label>
+            <select id="filter-day"><option value="">All days</option></select>
+          </div>
+          <div class="field-inline field-inline-search">
+            <label for="tt-search">Search</label>
+            <input type="search" id="tt-search" placeholder="Search timetable..." />
+          </div>
+          <button class="btn btn-ghost" id="tt-clear-filters">Clear</button>
+        </div>
+
+        <div class="card table-card">
+          <div class="table-scroll">
+            <table class="grid-table" id="timetable-grid" aria-label="Weekly timetable grid"></table>
+          </div>
+          <p class="empty-state hidden" id="timetable-empty">No timetable entries match your filters yet.</p>
+        </div>
+      </section>
+
+      <!-- GENERATE TIMETABLE -->
+      <section class="page hidden" id="section-generate" data-page="generate">
+        <div class="page-head">
+          <div>
+            <h1>Automatic Timetable Generator</h1>
+            <p class="muted">Pick a class, its subjects &amp; rooms — the engine finds a clash-free layout</p>
+          </div>
+        </div>
+
+        <div class="card generate-card">
+          <form id="generate-form">
+            <div class="field">
+              <label for="gen-class">Class / Section</label>
+              <select id="gen-class" required></select>
+            </div>
+
+            <div class="field">
+              <label>Subjects to schedule (select subjects, assign a teacher for each)</label>
+              <div id="gen-subject-list" class="gen-subject-list"></div>
+            </div>
+
+            <div class="field">
+              <label for="gen-rooms">Available rooms for this class</label>
+              <select id="gen-rooms" multiple size="6"></select>
+              <small class="muted">Hold Ctrl / Cmd to select multiple rooms</small>
+            </div>
+
+            <div class="field">
+              <label for="gen-periods">Max periods per day for this class</label>
+              <input type="number" id="gen-periods" min="1" max="7" value="7" required />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Generate Timetable</button>
+          </form>
+
+          <div id="generate-result" class="generate-result hidden"></div>
+        </div>
+      </section>
+
+      <!-- CLASSES -->
+      <section class="page hidden" id="section-classes" data-page="classes">
+        <div class="page-head">
+          <div><h1>Class Management</h1><p class="muted">Programs, sections and enrolled strength</p></div>
+          <div class="page-head-actions">
+            <input type="search" class="input-inline" id="class-search" placeholder="Search classes..." />
+            <button class="btn btn-primary" id="class-add-btn">+ Add Class</button>
+          </div>
+        </div>
+        <div class="card-grid" id="classes-grid"></div>
+        <p class="empty-state hidden" id="classes-empty">No classes yet. Add your first class or section.</p>
+      </section>
+
+      <!-- TEACHERS -->
+      <section class="page hidden" id="section-teachers" data-page="teachers">
+        <div class="page-head">
+          <div><h1>Teacher Management</h1><p class="muted">Faculty, departments and availability</p></div>
+          <div class="page-head-actions">
+            <input type="search" class="input-inline" id="teacher-search" placeholder="Search teachers..." />
+            <select class="input-inline" id="teacher-dept-filter"><option value="">All departments</option></select>
+            <button class="btn btn-secondary" id="teacher-absence-btn">🩺 Report Absence</button>
+            <button class="btn btn-primary" id="teacher-add-btn">+ Add Teacher</button>
+          </div>
+        </div>
+        <div class="card table-card">
+          <div class="table-scroll">
+            <table class="data-table" id="teachers-table">
+              <thead>
+                <tr><th>ID</th><th>Name</th><th>Department</th><th>Subjects</th><th>Available days</th><th>Actions</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <p class="empty-state hidden" id="teachers-empty">No teachers found.</p>
+        </div>
+      </section>
+
+      <!-- SUBJECTS -->
+      <section class="page hidden" id="section-subjects" data-page="subjects">
+        <div class="page-head">
+          <div><h1>Subject Management</h1><p class="muted">Courses, codes and weekly period load</p></div>
+          <div class="page-head-actions">
+            <input type="search" class="input-inline" id="subject-search" placeholder="Search subjects..." />
+            <button class="btn btn-primary" id="subject-add-btn">+ Add Subject</button>
+          </div>
+        </div>
+        <div class="card table-card">
+          <div class="table-scroll">
+            <table class="data-table" id="subjects-table">
+              <thead><tr><th>Code</th><th>Subject</th><th>Faculty</th><th>Weekly periods</th><th>Actions</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <p class="empty-state hidden" id="subjects-empty">No subjects found.</p>
+        </div>
+      </section>
+
+      <!-- CLASSROOMS -->
+      <section class="page hidden" id="section-classrooms" data-page="classrooms">
+        <div class="page-head">
+          <div><h1>Classroom Management</h1><p class="muted">Rooms, labs and halls with live availability</p></div>
+          <div class="page-head-actions">
+            <input type="search" class="input-inline" id="room-search" placeholder="Search rooms..." />
+            <button class="btn btn-primary" id="room-add-btn">+ Add Room</button>
+          </div>
+        </div>
+        <div class="card-grid" id="rooms-grid"></div>
+        <p class="empty-state hidden" id="rooms-empty">No rooms yet.</p>
+      </section>
+
+      <!-- CALENDAR -->
+      <section class="page hidden" id="section-calendar" data-page="calendar">
+        <div class="page-head">
+          <div><h1>Weekly Calendar</h1><p class="muted">Visual week-by-week view of scheduled classes</p></div>
+          <div class="page-head-actions">
+            <button class="btn btn-secondary" id="cal-prev">← Previous</button>
+            <button class="btn btn-secondary" id="cal-today">This week</button>
+            <button class="btn btn-secondary" id="cal-next">Next →</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="cal-range" id="cal-range-label"></div>
+          <div class="table-scroll">
+            <table class="grid-table" id="calendar-grid" aria-label="Calendar week view"></table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ANALYTICS -->
+      <section class="page hidden" id="section-analytics" data-page="analytics">
+        <div class="page-head">
+          <div><h1>Timetable Analytics</h1><p class="muted">Utilisation, workload and conflict insight</p></div>
+        </div>
+        <div class="dash-grid">
+          <div class="card">
+            <div class="card-head"><h2>Teacher workload</h2><span class="muted small">Periods / week</span></div>
+            <div id="chart-teacher-load" class="bar-chart"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Classes per day</h2><span class="muted small">Across the week</span></div>
+            <div id="chart-classes-day" class="bar-chart"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Subject distribution</h2><span class="muted small">Total periods scheduled</span></div>
+            <div id="chart-subject-dist" class="bar-chart"></div>
+          </div>
+        </div>
+        <div class="dash-grid">
+          <div class="card">
+            <div class="card-head"><h2>Room utilisation</h2><span class="muted small">Most → least occupied</span></div>
+            <div id="chart-room-usage" class="bar-chart"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Free rooms right now (by slot pattern)</h2></div>
+            <div id="analytics-free-rooms" class="list-simple"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Conflict summary</h2></div>
+            <div id="analytics-conflicts" class="list-simple"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ANNOUNCEMENTS -->
+      <section class="page hidden" id="section-announcements" data-page="announcements">
+        <div class="page-head">
+          <div><h1>Announcements</h1><p class="muted">Broadcast schedule changes to staff and students</p></div>
+          <div class="page-head-actions">
+            <button class="btn btn-primary" id="announcement-add-btn">+ New Announcement</button>
+          </div>
+        </div>
+        <div id="announcements-list" class="announce-list"></div>
+        <p class="empty-state hidden" id="announcements-empty">No announcements yet.</p>
+      </section>
+
+      <!-- NOTIFICATIONS -->
+      <section class="page hidden" id="section-notifications" data-page="notifications">
+        <div class="page-head">
+          <div><h1>Notifications</h1><p class="muted">System activity, clashes and updates</p></div>
+          <div class="page-head-actions">
+            <button class="btn btn-secondary" id="notif-mark-all">Mark all as read</button>
+            <button class="btn btn-ghost" id="notif-clear-all">Clear all</button>
+          </div>
+        </div>
+        <div id="notifications-list" class="notif-list"></div>
+        <p class="empty-state hidden" id="notifications-empty">You're all caught up — no notifications.</p>
+      </section>
+
+      <!-- AUDIT LOG -->
+      <section class="page hidden" id="section-audit" data-page="audit">
+        <div class="page-head">
+          <div><h1>Audit Log</h1><p class="muted">Who changed what, and when — every create, edit, delete and override</p></div>
+          <div class="page-head-actions">
+            <select class="input-inline" id="audit-action-filter">
+              <option value="">All actions</option>
+              <option value="create">Created</option>
+              <option value="update">Updated</option>
+              <option value="delete">Deleted</option>
+              <option value="override">Overridden</option>
+              <option value="generate">Generated</option>
+              <option value="substitute">Substitute</option>
+            </select>
+            <input type="search" class="input-inline" id="audit-search" placeholder="Search audit log..." />
+            <button class="btn btn-ghost" id="audit-clear-btn">Clear log</button>
+          </div>
+        </div>
+        <div id="audit-list" class="audit-list"></div>
+        <p class="empty-state hidden" id="audit-empty">No activity recorded yet — actions you take will show up here.</p>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="page hidden" id="section-settings" data-page="settings">
+        <div class="page-head">
+          <div><h1>Settings</h1><p class="muted">Personalise your workspace</p></div>
+        </div>
+        <div class="card settings-card">
+          <h2>Appearance</h2>
+          <div class="field-row">
+            <span>Theme</span>
+            <div class="segmented" id="theme-segmented">
+              <button type="button" data-theme="light" class="seg-btn">☀ Light</button>
+              <button type="button" data-theme="dark" class="seg-btn">🌙 Dark</button>
+            </div>
+          </div>
+        </div>
+        <div class="card settings-card">
+          <h2>Profile</h2>
+          <form id="profile-form">
+            <div class="field">
+              <label for="settings-name">Display name</label>
+              <input type="text" id="settings-name" required />
+            </div>
+            <div class="field">
+              <label for="settings-role">Role</label>
+              <input type="text" id="settings-role" required />
+            </div>
+            <button type="submit" class="btn btn-primary">Save profile</button>
+          </form>
+        </div>
+        <div class="card settings-card">
+          <h2>Data</h2>
+          <p class="muted">All data is stored locally in this browser via <code>localStorage</code>. Nothing is sent to a server.</p>
+          <div class="field-row">
+            <button class="btn btn-secondary" id="settings-export-all">Export all data (JSON)</button>
+            <button class="btn btn-danger" id="settings-reset-all">Reset to demo data</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="app-footer">
+      <p>Smart Classroom &amp; Timetable Scheduler — runs entirely in your browser. No backend, no data leaves this device.</p>
+    </footer>
+  </div>
+</div>
+
+<div class="sidebar-scrim hidden" id="sidebar-scrim"></div>
+
+<!-- ============ MODALS ============ -->
+
+<dialog id="modal-form" class="modal">
+  <div class="modal-inner">
+    <div class="modal-head">
+      <h2 id="modal-form-title">Title</h2>
+      <button class="icon-btn" id="modal-form-close" aria-label="Close dialog">✕</button>
+    </div>
+    <form id="modal-form-el">
+      <div id="modal-form-body" class="modal-body"></div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" id="modal-form-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="modal-form-submit">Save</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<dialog id="modal-confirm" class="modal modal-sm">
+  <div class="modal-inner">
+    <div class="modal-head">
+      <h2 id="modal-confirm-title">Please confirm</h2>
+      <button class="icon-btn" id="modal-confirm-close" aria-label="Close dialog">✕</button>
+    </div>
+    <p id="modal-confirm-text" class="modal-body-text"></p>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-ghost" id="modal-confirm-cancel">Cancel</button>
+      <button type="button" class="btn btn-danger" id="modal-confirm-ok">Delete</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="modal-conflict" class="modal modal-sm">
+  <div class="modal-inner">
+    <div class="modal-head">
+      <h2>⚠ Scheduling Conflict Detected</h2>
+      <button class="icon-btn" id="modal-conflict-close" aria-label="Close dialog">✕</button>
+    </div>
+    <p class="modal-body-text">Saving this entry causes the following clash(es):</p>
+    <ul id="modal-conflict-list" class="conflict-list"></ul>
+    <p class="muted small">You can cancel and change the slot/room/teacher, or override and save anyway (not recommended).</p>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-ghost" id="modal-conflict-cancel">Cancel</button>
+      <button type="button" class="btn btn-danger" id="modal-conflict-override">Override &amp; Save</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="modal-substitute" class="modal">
+  <div class="modal-inner">
+    <div class="modal-head">
+      <h2>🩺 Report Absence &amp; Find Substitutes</h2>
+      <button class="icon-btn" id="modal-substitute-close" aria-label="Close dialog">✕</button>
+    </div>
+    <div class="field-grid">
+      <div class="field"><label for="sub-teacher">Absent teacher</label><select id="sub-teacher"></select></div>
+      <div class="field"><label for="sub-day">Day</label><select id="sub-day"></select></div>
+    </div>
+    <div id="sub-results" class="sub-results"></div>
+  </div>
+</dialog>
+
+<!-- ============ COMMAND PALETTE ============ -->
+<div id="cmdk-overlay" class="cmdk-overlay hidden" role="dialog" aria-label="Command palette" aria-modal="true">
+  <div class="cmdk-box">
+    <div class="cmdk-input-wrap">
+      <span aria-hidden="true">⌘</span>
+      <input type="text" id="cmdk-input" placeholder="Type a command or search a page... (e.g. 'add teacher', 'dark mode', 'calendar')" autocomplete="off" />
+      <kbd>Esc</kbd>
+    </div>
+    <ul id="cmdk-list" class="cmdk-list"></ul>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
