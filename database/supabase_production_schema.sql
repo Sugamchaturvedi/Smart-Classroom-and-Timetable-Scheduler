@@ -324,3 +324,4 @@ CREATE INDEX IF NOT EXISTS idx_timetable_rules_key ON timetable_rules(rule_key);
 CREATE INDEX IF NOT EXISTS idx_timetable_rules_enabled ON timetable_rules(is_enabled);
 CREATE INDEX IF NOT EXISTS idx_teacher_pref_teacher ON teacher_preferences(teacher_id);
 CREATE INDEX IF NOT EXISTS idx_teacher_pref_status ON teacher_preferences(status);
+

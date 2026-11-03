@@ -5,7 +5,16 @@ require("dotenv").config({ path: path.join(__dirname, "../backend/.env") });
 
 const sourcePool = require("../backend/db");
 
-const targetConnectionString = process.argv[2] || process.env.SUPABASE_DATABASE_URL || process.env.TARGET_DATABASE_URL;
+let secretConnString = null;
+try {
+  const secretPath = path.join(__dirname, ".supabase_conn_secret.json");
+  if (fs.existsSync(secretPath)) {
+    const s = JSON.parse(fs.readFileSync(secretPath, "utf8"));
+    secretConnString = s.connectionString;
+  }
+} catch (_) {}
+
+const targetConnectionString = process.argv[2] || process.env.SUPABASE_DATABASE_URL || process.env.TARGET_DATABASE_URL || secretConnString;
 
 if (!targetConnectionString) {
   console.error("Usage: node database/migrate_to_supabase.js <SUPABASE_CONNECTION_STRING>");
@@ -104,7 +113,13 @@ async function migrate() {
           const rowPlaceholders = [];
           for (const col of columns) {
             rowPlaceholders.push(`$${pIndex++}`);
-            values.push(row[col]);
+            let val = row[col];
+            if (val !== null && typeof val === "object" && !(val instanceof Date)) {
+              if ((table === "study_plans" && col === "modules") || (table === "timetable_rules" && col === "config")) {
+                val = JSON.stringify(val);
+              }
+            }
+            values.push(val);
           }
           valuePlaceholders.push(`(${rowPlaceholders.join(", ")})`);
         }
@@ -149,3 +164,4 @@ async function migrate() {
 }
 
 migrate();
+

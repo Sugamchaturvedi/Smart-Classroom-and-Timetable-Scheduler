@@ -6,3 +6,9 @@ backend/.env
 Thumbs.db
 .vscode/
 database/backups/
+
+.vercel
+.env*
+database/.supabase_conn_secret.json
+supabase/
+database/test_production_e2e.js
