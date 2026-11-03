@@ -1,559 +1,2508 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="theme-color" content="#1E3A5F" />
-<title>Smart Classroom &amp; Timetable Scheduler</title>
-<link rel="manifest" href="manifest.json" />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231E3A5F'/%3E%3Ctext x='50' y='68' font-size='55' text-anchor='middle' fill='white' font-family='Arial'%3ES%3C/text%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b0f19" />
+  <title>StudyPlan — Smart Classroom &amp; Timetable Scheduler</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%234F46E5'/%3E%3Ctext x='50' y='68' font-size='55' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'%3ES%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
-<!-- ============ TOAST CONTAINER ============ -->
-<div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+  <!-- ============ TOAST CONTAINER ============ -->
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 
-<!-- ============ LOGIN PAGE ============ -->
-<main id="login-page" class="login-page">
-  <div class="login-shell">
-    <section class="login-brand" aria-hidden="true">
-      <div class="brand-mark">
-        <span class="brand-glyph">S</span>
-      </div>
-      <h1>Smart Classroom &amp; Timetable Scheduler</h1>
-      <p>One shared source of truth for classes, teachers, rooms and time &mdash; built to catch clashes before they happen.</p>
-      <ul class="brand-points">
-        <li>Automatic teacher, room &amp; class clash detection</li>
-        <li>One-click conflict-free timetable generation</li>
-        <li>Live dashboard, calendar &amp; analytics</li>
-      </ul>
-    </section>
+  <!-- ============ LOGIN PAGE ============ -->
+  <main id="login-page" class="login-page">
+    <div class="login-shell">
+      <section class="login-brand" aria-hidden="true">
+        <div class="brand-header-logo">
+          <div class="brand-icon-box">S</div>
+          <div class="brand-text-logo"><span class="study">Study</span><span class="plan">Plan</span></div>
+        </div>
+        <h1>Smart Classroom &amp; Timetable Scheduler</h1>
+        <p>A centralized university timetable administration platform with automated conflict detection, room
+          distribution, and scheduling analytics.</p>
+        <ul class="brand-points">
+          <li>Real-time teacher, room &amp; section clash prevention</li>
+          <li>One-click automated clash-free timetable solver</li>
+          <li>Interactive drag-and-drop schedule management</li>
+          <li>PostgreSQL-backed university resource catalog</li>
+        </ul>
+      </section>
 
-    <section class="login-card" aria-labelledby="login-heading">
-      <div class="login-card-head">
-        <div class="brand-mark small"><span class="brand-glyph">S</span></div>
-        <div>
+      <section class="login-card" aria-labelledby="login-heading">
+        <div class="login-card-head">
           <h2 id="login-heading">Sign in</h2>
-          <p class="muted">Access your scheduling workspace</p>
+          <p>Access your university scheduling workspace</p>
         </div>
+
+        <form id="login-form" novalidate>
+          <div class="field">
+            <label for="login-email">Email or username</label>
+            <input type="text" id="login-email" name="email" placeholder="admin@brightfield.edu" autocomplete="username"
+              required />
+            <small class="field-error" id="login-email-error"></small>
+          </div>
+          <div class="field">
+            <label for="login-password">Password</label>
+            <div class="password-wrap">
+              <input type="password" id="login-password" name="password" placeholder="Enter your password"
+                autocomplete="current-password" required />
+              <button type="button" class="ghost-icon-btn" id="toggle-password" aria-label="Show password">👁</button>
+            </div>
+            <small class="field-error" id="login-password-error"></small>
+          </div>
+          <div class="field-row">
+            <label class="checkbox-label">
+              <input type="checkbox" id="remember-me" checked />
+              <span>Remember me</span>
+            </label>
+            <div style="display:flex; gap:0.4rem;">
+              <button type="button" class="btn btn-ghost-sm" id="demo-login-btn" title="Quick fill Admin credentials">Admin Demo</button>
+              <button type="button" class="btn btn-ghost-sm" id="demo-teacher-btn" title="Quick fill Teacher credentials">Teacher Demo</button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Sign in to Scheduler</button>
+          <div class="login-hints-box" style="margin-top:0.75rem; font-size:0.78rem; color:var(--text-muted); display:flex; flex-direction:column; gap:0.25rem;">
+            <span>Admin: <strong>admin@brightfield.edu</strong> / <strong>admin123</strong></span>
+            <span>Teacher: <strong>teacher@brightfield.edu</strong> / <strong>teacher123</strong></span>
+          </div>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <!-- ============ APP SHELL ============ -->
+  <div id="app-shell" class="app-shell hidden">
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar" aria-label="Primary navigation">
+      <div class="sidebar-top-section">
+        <div class="sidebar-head">
+          <div class="sidebar-brand">
+            <div class="brand-icon-box">S</div>
+            <div class="sidebar-brand-name"><span class="study">Study</span><span class="plan">Plan</span></div>
+          </div>
+          <button class="icon-btn sidebar-close" id="sidebar-close" aria-label="Close menu">✕</button>
+        </div>
+        <ul class="nav-list" id="sidebar-admin-nav">
+          <li><a href="#dashboard" class="nav-link active" data-section="dashboard"><span
+                class="nav-ico">▦</span>Dashboard</a></li>
+          <li><a href="#timetable" class="nav-link" data-section="timetable"><span
+                class="nav-ico">🗓</span>Timetable</a></li>
+          <li><a href="#timetable" class="nav-link nav-link-makeup" id="nav-link-makeup" data-section="timetable"
+              title="Schedule and view makeup classes"><span class="nav-ico">⏰</span>Makeup Classes <span
+                class="pill pill-warning"
+                style="margin-left:auto; font-size:0.68rem; padding:0.15rem 0.45rem; background:rgba(245,158,11,0.22); color:#fbbf24; border-radius:10px; font-weight:700;">+
+                Add</span></a></li>
+          <!-- Study Plan Library with Interactive Dropdown Accordion -->
+          <li class="nav-item-dropdown" id="nav-item-study-plans">
+            <div class="nav-dropdown-row">
+              <a href="#study-plans" class="nav-link" data-section="study-plans" id="nav-link-study-plans">
+                <span class="nav-ico">📚</span>Study Plan Library
+              </a>
+              <button type="button" class="nav-dropdown-toggle" id="sp-dropdown-toggle" aria-expanded="false"
+                title="Explore Program Libraries" aria-label="Toggle study plans dropdown">
+                <span class="dropdown-chevron">▾</span>
+              </button>
+            </div>
+            <ul class="nav-sub-list hidden" id="sp-nav-sub-menu" aria-label="Study Plan Programs">
+              <li>
+                <a href="#study-plans" class="nav-sub-link active" data-prog-id="" data-prog-name="All Programs">
+                  <span class="sub-ico">📂</span>
+                  <span class="sub-text">All Programs</span>
+                </a>
+              </li>
+              <li>
+                <a href="#study-plans" class="nav-sub-link" data-prog-id="1" data-prog-name="B.Tech">
+                  <span class="sub-badge prog-badge-tech">B.Tech</span>
+                  <span class="sub-text">Bachelor of Tech</span>
+                </a>
+              </li>
+              <li>
+                <a href="#study-plans" class="nav-sub-link" data-prog-id="2" data-prog-name="M.Tech">
+                  <span class="sub-badge prog-badge-mtech">M.Tech</span>
+                  <span class="sub-text">Master of Tech</span>
+                </a>
+              </li>
+              <li>
+                <a href="#study-plans" class="nav-sub-link" data-prog-id="3" data-prog-name="BBA">
+                  <span class="sub-badge prog-badge-bba">BBA</span>
+                  <span class="sub-text">Business Admin</span>
+                </a>
+              </li>
+              <li>
+                <a href="#study-plans" class="nav-sub-link" data-prog-id="4" data-prog-name="MBA">
+                  <span class="sub-badge prog-badge-mba">MBA</span>
+                  <span class="sub-text">Master of Business</span>
+                </a>
+              </li>
+              <li>
+                <a href="#study-plans" class="nav-sub-link" data-prog-id="5" data-prog-name="BCA">
+                  <span class="sub-badge prog-badge-bca">BCA</span>
+                  <span class="sub-text">Computer Apps</span>
+                </a>
+              </li>
+              <li>
+                <a href="#study-plans" class="nav-sub-link" data-prog-id="6" data-prog-name="MCA">
+                  <span class="sub-badge prog-badge-mca">MCA</span>
+                  <span class="sub-text">Master in Apps</span>
+                </a>
+              </li>
+              <li>
+                <a href="#study-plans" class="nav-sub-link" data-prog-id="7" data-prog-name="BA">
+                  <span class="sub-badge prog-badge-ba">BA</span>
+                  <span class="sub-text">Bachelor of Arts</span>
+                </a>
+              </li>
+              <li>
+                <a href="#study-plans" class="nav-sub-link" data-prog-id="8" data-prog-name="MA">
+                  <span class="sub-badge prog-badge-ma">MA</span>
+                  <span class="sub-text">Master of Arts</span>
+                </a>
+              </li>
+              <li>
+                <a href="#study-plans" class="nav-sub-link" data-prog-id="9" data-prog-name="PhD">
+                  <span class="sub-badge prog-badge-phd">PhD</span>
+                  <span class="sub-text">Doctoral Research</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li><a href="#subjects" class="nav-link" data-section="subjects"><span class="nav-ico">📘</span>Subjects</a>
+          </li>
+          <li><a href="#classes" class="nav-link" data-section="classes"><span class="nav-ico">🎓</span>Classes</a></li>
+          <li><a href="#sections" class="nav-link" data-section="sections"><span class="nav-ico">📂</span>Sections</a>
+          </li>
+          <li id="nav-item-teachers"><a href="#teachers" class="nav-link" data-section="teachers" id="nav-link-teachers"><span
+                class="nav-ico">🧑‍🏫</span>Teachers Directory</a></li>
+          <li id="nav-item-teacher-accounts"><a href="#teacher-accounts" class="nav-link" data-section="teacher-accounts" id="nav-link-teacher-accounts"><span
+                class="nav-ico">👥</span>Manage Teacher Accounts</a></li>
+          <li id="nav-item-rules"><a href="#rules" class="nav-link" data-section="rules" id="nav-link-rules"><span
+                class="nav-ico">⚖️</span>Timetable Rules</a></li>
+          <li><a href="#classrooms" class="nav-link" data-section="classrooms"><span
+                class="nav-ico">🏛</span>Classrooms</a></li>
+          <li><a href="#generate" class="nav-link" data-section="generate"><span class="nav-ico">⚙️</span>Generate</a>
+          </li>
+          <li><a href="#calendar" class="nav-link" data-section="calendar"><span class="nav-ico">📅</span>Calendar</a>
+          </li>
+          <li><a href="#analytics" class="nav-link" data-section="analytics"><span
+                class="nav-ico">📊</span>Analytics</a></li>
+          <li><a href="#announcements" class="nav-link" data-section="announcements"><span
+                class="nav-ico">📣</span>Announcements</a></li>
+          <li><a href="#notifications" class="nav-link" data-section="notifications"><span
+                class="nav-ico">🔔</span>Notifications <span class="pill pill-count hidden"
+                id="sidebar-notif-count">0</span></a></li>
+          <li><a href="#audit" class="nav-link" data-section="audit"><span class="nav-ico">🕘</span>Audit Log</a></li>
+          <li><a href="#settings" class="nav-link" data-section="settings"><span class="nav-ico">⚙</span>Settings</a>
+          </li>
+        </ul>
+
+        <!-- TEACHER ROLE NAVIGATION (Displayed dynamically for TEACHER role) -->
+        <ul class="nav-list hidden" id="sidebar-teacher-nav" aria-label="Teacher navigation">
+          <li><a href="#teacher-dashboard" class="nav-link active" data-section="teacher-dashboard"><span
+                class="nav-ico">▦</span>Dashboard</a></li>
+          <li><a href="#teacher-timetable" class="nav-link" data-section="teacher-timetable"><span
+                class="nav-ico">🗓</span>My Timetable</a></li>
+          <li><a href="#teacher-subjects" class="nav-link" data-section="teacher-subjects"><span
+                class="nav-ico">📘</span>My Subjects</a></li>
+          <li><a href="#teacher-classes" class="nav-link" data-section="teacher-classes"><span
+                class="nav-ico">🎓</span>My Classes &amp; Sections</a></li>
+          <li><a href="#teacher-makeup" class="nav-link" data-section="teacher-makeup"><span
+                class="nav-ico">⏰</span>Makeup Classes</a></li>
+          <li><a href="#teacher-availability" class="nav-link" data-section="teacher-availability"><span
+                class="nav-ico">📅</span>My Availability</a></li>
+          <li><a href="#announcements" class="nav-link" data-section="announcements"><span
+                class="nav-ico">📣</span>Announcements</a></li>
+          <li><a href="#notifications" class="nav-link" data-section="notifications"><span
+                class="nav-ico">🔔</span>Notifications <span class="pill pill-count hidden"
+                id="sidebar-teacher-notif-count">0</span></a></li>
+          <li><a href="#settings" class="nav-link" data-section="settings"><span class="nav-ico">⚙</span>Settings</a></li>
+        </ul>
       </div>
 
-      <form id="login-form" novalidate>
-        <div class="field">
-          <label for="login-email">Email or username</label>
-          <input type="text" id="login-email" name="email" placeholder="admin@brightfield.edu" autocomplete="username" required />
-          <small class="field-error" id="login-email-error"></small>
+      <div class="sidebar-bottom-section">
+        <!-- Reference Inspiration Card -->
+        <div class="sidebar-quote-card">
+          <p class="quote-text">A better <strong>schedule</strong> leads to a <strong>brighter you.</strong></p>
+          <div class="quote-bar"></div>
         </div>
-        <div class="field">
-          <label for="login-password">Password</label>
-          <div class="password-wrap">
-            <input type="password" id="login-password" name="password" placeholder="Enter your password" autocomplete="current-password" required />
-            <button type="button" class="ghost-icon-btn" id="toggle-password" aria-label="Show password">👁</button>
+
+        <div class="sidebar-foot">
+          <button class="btn btn-ghost btn-block" id="logout-btn">⎋ Log out</button>
+        </div>
+      </div>
+    </nav>
+
+    <div class="app-main">
+      <!-- TOP HEADER -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn" id="sidebar-open" aria-label="Open menu">☰</button>
+          <div class="topbar-search">
+            <span class="search-ico">🔍</span>
+            <input type="search" id="global-search" placeholder="Search subjects, rooms or faculty..."
+              aria-label="Search subjects, rooms or faculty" autocomplete="off" />
           </div>
-          <small class="field-error" id="login-password-error"></small>
         </div>
-        <div class="field-row">
-          <label class="checkbox-label">
-            <input type="checkbox" id="remember-me" />
-            <span>Remember me</span>
-          </label>
-          <button type="button" class="link-btn" id="demo-login-btn">Use demo login</button>
+
+        <div class="topbar-actions">
+          <!-- Semester/Program Dropdown Selector -->
+          <select class="topbar-select" id="header-semester-select" aria-label="Select Semester">
+            <option value="3" selected>Semester 3</option>
+            <option value="1">Semester 1</option>
+            <option value="2">Semester 2</option>
+            <option value="4">Semester 4</option>
+            <option value="5">Semester 5</option>
+            <option value="6">Semester 6</option>
+            <option value="all">All Semesters</option>
+          </select>
+          <button class="btn btn-warning btn-sm" id="topbar-makeup-btn"
+            title="Schedule Makeup Class for Absent Teacher / Missed Lecture"
+            style="font-weight:700; display:inline-flex; align-items:center; gap:0.35rem; padding:0.4rem 0.85rem; border-radius:var(--radius-pill); background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; border:none; box-shadow:0 2px 8px rgba(245,158,11,0.25); cursor:pointer;">
+            <span>⏰</span>
+            <span>+ Makeup Class</span>
+          </button>
+
+          <button class="btn btn-secondary cmdk-trigger" id="cmdk-open-btn" title="Open command palette">⌘K</button>
+          <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme" title="Toggle theme">🌙</button>
+          <button class="icon-btn" id="notif-bell" aria-label="Notifications" title="Notifications">
+            🔔<span class="notif-dot hidden" id="notif-dot"></span>
+          </button>
+
+          <!-- User Profile Chip & Dropdown Container -->
+          <div class="profile-chip-wrapper" id="profile-chip-wrapper">
+            <div class="profile-chip" id="profile-chip" title="User Profile Menu" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false">
+              <div class="profile-avatar" id="profile-avatar">
+                <span class="avatar-initial" id="profile-avatar-initial">A</span>
+              </div>
+              <div class="profile-meta">
+                <span class="profile-name" id="profile-name">University Administrator</span>
+                <span class="profile-role-badge" id="profile-role-badge">ADMIN</span>
+              </div>
+              <span class="profile-caret" id="profile-caret">⌵</span>
+              <span class="hidden" id="profile-role">ADMIN</span>
+            </div>
+
+            <!-- Profile Dropdown Menu -->
+            <div class="profile-dropdown-menu hidden" id="profile-dropdown-menu" role="menu" aria-label="User Account Menu">
+              <div class="pdm-header">
+                <div class="pdm-avatar" id="pdm-avatar">A</div>
+                <div class="pdm-info">
+                  <strong class="pdm-name" id="pdm-name">University Administrator</strong>
+                  <span class="pdm-email" id="pdm-email">admin@brightfield.edu</span>
+                  <span class="pdm-role-tag" id="pdm-role-tag">University Administrator</span>
+                </div>
+              </div>
+              <div class="pdm-divider"></div>
+              <button type="button" class="pdm-item" id="pdm-item-profile" role="menuitem">
+                <span class="pdm-icon">👤</span>
+                <span class="pdm-label">My Profile</span>
+              </button>
+              <button type="button" class="pdm-item" id="pdm-item-edit-profile" role="menuitem">
+                <span class="pdm-icon">✏️</span>
+                <span class="pdm-label">Edit Profile</span>
+              </button>
+              <button type="button" class="pdm-item" id="pdm-item-change-password" role="menuitem">
+                <span class="pdm-icon">🔑</span>
+                <span class="pdm-label">Change Password</span>
+              </button>
+              <button type="button" class="pdm-item" id="pdm-item-settings" role="menuitem">
+                <span class="pdm-icon">⚙️</span>
+                <span class="pdm-label">Account Settings</span>
+              </button>
+              <button type="button" class="pdm-item" id="pdm-item-permissions" role="menuitem">
+                <span class="pdm-icon">🛡️</span>
+                <span class="pdm-label">Role and Permissions</span>
+              </button>
+              <div class="pdm-divider"></div>
+              <button type="button" class="pdm-item pdm-item-danger" id="pdm-item-logout" role="menuitem">
+                <span class="pdm-icon">🚪</span>
+                <span class="pdm-label">Logout</span>
+              </button>
+            </div>
+          </div>
         </div>
-        <button type="submit" class="btn btn-primary btn-block">Sign in</button>
-        <p class="login-hint">Demo credentials: <strong>admin@brightfield.edu</strong> / <strong>admin123</strong></p>
+      </header>
+
+      <!-- GLOBAL SEARCH RESULTS DROPDOWN -->
+      <div id="search-results" class="search-results hidden"></div>
+
+      <main class="content" id="content">
+
+        <!-- ============ DASHBOARD PAGE (Matching Reference Layout) ============ -->
+        <section class="page" id="section-dashboard" data-page="dashboard">
+
+          <!-- Welcome Section -->
+          <div class="welcome-card">
+            <div class="welcome-text">
+              <h1 id="dash-greeting">Good Afternoon, Ansh</h1>
+              <p id="dash-subgreeting">Here's your class schedule for this week.</p>
+            </div>
+            <div class="welcome-actions" style="display:flex; gap:0.65rem; align-items:center;">
+              <button class="btn btn-warning" id="dash-welcome-makeup-btn"
+                style="font-weight:700; background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; border:none; box-shadow:0 2px 10px rgba(245,158,11,0.3); cursor:pointer;">
+                ⏰ Schedule Makeup Class
+              </button>
+              <button class="btn btn-primary" id="dash-add-class-btn">+ Add Class</button>
+            </div>
+          </div>
+
+          <!-- 6 Summary Stat Cards -->
+          <div class="stat-grid" id="stat-grid" style="margin-bottom: 1.25rem;"></div>
+
+          <!-- Quick Actions Toolbar -->
+          <div class="quick-actions-strip"
+            style="margin-bottom: 1.5rem; display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">
+            <button class="btn btn-warning" id="dash-qa-makeup"
+              style="font-weight:700; background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; border:none; box-shadow:0 2px 8px rgba(245,158,11,0.25); cursor:pointer;">⏰
+              Schedule Makeup Class</button>
+            <button class="btn btn-secondary btn-ghost-sm" id="dash-qa-timetable">+ Add Timetable</button>
+            <button class="btn btn-secondary btn-ghost-sm" id="dash-qa-study-plans">📚 Study Plan Library</button>
+            <button class="btn btn-secondary btn-ghost-sm" id="dash-qa-generate">⚙️ Generate Timetable</button>
+            <button class="btn btn-secondary btn-ghost-sm" id="dash-qa-teacher">🧑‍🏫 Add Teacher</button>
+            <button class="btn btn-secondary btn-ghost-sm" id="dash-qa-room">🏛 Add Classroom</button>
+          </div>
+
+          <!-- 2-Column Dashboard Layout (Weekly Schedule on Left, Widgets on Right) -->
+          <div class="dashboard-layout">
+
+            <!-- LEFT / CENTER COLUMN: Main Timetable Preview -->
+            <div class="dashboard-main">
+              <div class="schedule-preview-card">
+
+                <!-- Timetable Controls (Week/Month/List + Date Navigator + Today) -->
+                <div class="schedule-controls-bar">
+                  <div class="segmented-control" id="dash-view-mode">
+                    <button type="button" class="seg-btn active" data-view="week">Week</button>
+                    <button type="button" class="seg-btn" data-view="month">Month</button>
+                    <button type="button" class="seg-btn" data-view="list">List</button>
+                  </div>
+
+                  <div class="date-navigator">
+                    <button type="button" class="icon-btn-sm" id="dash-date-prev" title="Previous Week">‹</button>
+                    <span class="date-range-badge" id="dash-date-range">Current Week</span>
+                    <button type="button" class="icon-btn-sm" id="dash-date-next" title="Next Week">›</button>
+                    <button type="button" class="btn btn-ghost-sm" id="dash-today-btn">Today</button>
+                  </div>
+
+                  <div class="dash-class-filter-wrap" style="display:inline-flex; align-items:center; gap:0.4rem; margin-left:auto;">
+                    <label for="dash-filter-class" class="muted small" style="white-space:nowrap; margin:0;">Class:</label>
+                    <select id="dash-filter-class" class="input-inline-sm" style="min-width:140px; padding:0.3rem 0.5rem; font-size:0.82rem; border-radius:var(--radius-sm); border:1px solid var(--border-subtle); background:var(--bg-card); color:var(--text-white);">
+                      <option value="">All Classes</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Weekly Schedule Grid -->
+                <div class="timetable-scroll-container">
+                  <table class="preview-grid-table" id="dash-timetable-grid" aria-label="Weekly Class Schedule">
+                    <!-- Generated dynamically in script.js -->
+                  </table>
+                  <div id="dash-timetable-list" class="hidden" style="padding:1.25rem;"></div>
+                </div>
+              </div>
+
+              <!-- Health Score Card -->
+              <div class="card health-card">
+                <div class="card-head">
+                  <div>
+                    <h2>Timetable Health Score</h2>
+                    <span class="muted small">Conflict-free rate + teacher workload balance + room-usage balance</span>
+                  </div>
+                  <span class="badge badge-soft" id="dash-date"></span>
+                </div>
+                <div class="health-body" id="health-body"></div>
+              </div>
+
+              <!-- Bottom Announcements & Conflicts row -->
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                <div class="card">
+                  <div class="card-head">
+                    <h2>Today's Classes</h2>
+                    <span class="muted small" id="today-label"></span>
+                  </div>
+                  <div id="today-classes-list" class="list-simple"></div>
+                </div>
+                <div class="card">
+                  <div class="card-head">
+                    <h2>Upcoming Schedule</h2>
+                    <span class="muted small">Next sessions</span>
+                  </div>
+                  <div id="upcoming-classes-list" class="list-simple"></div>
+                </div>
+                <div class="card">
+                  <div class="card-head">
+                    <h2>Active Conflicts</h2>
+                    <span class="muted small" id="conflict-count-label"></span>
+                  </div>
+                  <div id="dash-conflicts-list" class="list-simple"></div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: Today, Mini Calendar & Subjects Legend -->
+            <div class="dashboard-sidebar">
+
+              <!-- 1. Today Card (Reference layout with colored left stripes) -->
+              <div class="widget-card">
+                <div class="widget-head">
+                  <div>
+                    <h2>Today</h2>
+                    <span class="widget-subtitle" id="dash-today-widget-date">23 Sep 2026</span>
+                  </div>
+                  <button type="button" class="view-all-link" id="dash-view-today-btn">View All</button>
+                </div>
+                <div class="today-list" id="dash-today-list">
+                  <!-- Dynamically populated in script.js -->
+                </div>
+              </div>
+
+              <!-- 2. Mini Calendar Widget -->
+              <div class="widget-card">
+                <div class="mini-calendar-widget">
+                  <div class="calendar-header-nav">
+                    <span class="cal-month-title" id="mini-cal-title">September 2026</span>
+                    <div class="cal-nav-btns">
+                      <button type="button" class="icon-btn-sm" id="mini-cal-prev" title="Previous Month">‹</button>
+                      <button type="button" class="icon-btn-sm" id="mini-cal-next" title="Next Month">›</button>
+                    </div>
+                  </div>
+                  <div class="mini-cal-weekdays">
+                    <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                  </div>
+                  <div class="mini-cal-grid" id="mini-cal-grid">
+                    <!-- Populated in script.js -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. Subjects Legend Widget -->
+              <div class="widget-card">
+                <div class="widget-head">
+                  <h2>Subjects</h2>
+                  <button type="button" class="view-all-link" id="dash-view-subjects-btn">View All</button>
+                </div>
+                <div class="subjects-legend-list" id="dash-subjects-list">
+                  <!-- Populated in script.js -->
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ============ TIMETABLE MANAGEMENT PAGE ============ -->
+        <section class="page hidden" id="section-timetable" data-page="timetable">
+          <div class="page-head">
+            <div>
+              <h1>Timetable Management</h1>
+              <p class="muted">Interactive scheduling grid with clash-aware conflict checks &amp; drag-and-drop
+                rescheduling</p>
+            </div>
+            <div class="page-head-actions">
+              <button class="btn btn-danger" id="tt-delete-timetable-btn" title="Delete whole timetable or clear for selected class">🗑 Delete Timetable</button>
+              <button class="btn btn-warning" id="tt-schedule-makeup-btn">⏰ Schedule Makeup Class</button>
+              <button class="btn btn-secondary" id="tt-print-btn">🖨 Print</button>
+              <button class="btn btn-secondary" id="tt-export-btn">⬇ Export CSV</button>
+              <button class="btn btn-secondary" id="tt-export-ics-btn">📅 Export to Calendar</button>
+              <button class="btn btn-primary" id="tt-add-btn">+ Add Entry</button>
+            </div>
+          </div>
+
+          <div class="filter-bar card">
+            <div class="field-inline">
+              <label for="filter-class">Class</label>
+              <select id="filter-class">
+                <option value="">All classes</option>
+              </select>
+            </div>
+            <div class="field-inline">
+              <label for="filter-teacher">Teacher</label>
+              <select id="filter-teacher">
+                <option value="">All teachers</option>
+              </select>
+            </div>
+            <div class="field-inline">
+              <label for="filter-room">Room</label>
+              <select id="filter-room">
+                <option value="">All rooms</option>
+              </select>
+            </div>
+            <div class="field-inline">
+              <label for="filter-day">Day</label>
+              <select id="filter-day">
+                <option value="">All days</option>
+              </select>
+            </div>
+            <div class="field-inline">
+              <label for="filter-type">Type</label>
+              <select id="filter-type">
+                <option value="">All entries</option>
+                <option value="regular">Regular classes</option>
+                <option value="makeup">⏰ Makeup classes</option>
+              </select>
+            </div>
+            <div class="field-inline field-inline-search">
+              <label for="tt-search">Search</label>
+              <input type="search" id="tt-search" placeholder="Search subject, room, teacher or class..." />
+            </div>
+            <button class="btn btn-ghost" id="tt-clear-filters">Clear</button>
+          </div>
+
+          <div class="card table-card">
+            <div class="table-scroll">
+              <table class="grid-table" id="timetable-grid" aria-label="Weekly timetable grid"></table>
+            </div>
+            <p class="empty-state hidden" id="timetable-empty">No timetable entries match your filters yet.</p>
+          </div>
+        </section>
+
+        <!-- ============ STUDY PLAN LIBRARY PAGE ============ -->
+        <section class="page hidden" id="section-study-plans" data-page="study-plans">
+          <div class="page-head">
+            <div>
+              <h1>Study Plan Library</h1>
+              <p class="muted">Curriculum outlines, semester subject syllabi, and academic program roadmaps</p>
+            </div>
+            <div class="page-head-actions">
+              <button class="btn btn-secondary" id="sp-layout-toggle" title="Toggle Grid/Table View">⊞ Table
+                View</button>
+              <button class="btn btn-primary" id="sp-create-btn">+ Create Study Plan</button>
+            </div>
+          </div>
+
+          <div class="filter-bar card">
+            <div class="field-inline">
+              <label for="sp-filter-program">Program</label>
+              <select id="sp-filter-program">
+                <option value="">All Programs</option>
+                <option value="1">B.Tech</option>
+                <option value="2">M.Tech</option>
+                <option value="3">BBA</option>
+                <option value="4">MBA</option>
+                <option value="5">BCA</option>
+                <option value="6">MCA</option>
+                <option value="7">BA</option>
+                <option value="8">MA</option>
+                <option value="9">PhD</option>
+              </select>
+            </div>
+            <div class="field-inline">
+              <label for="sp-filter-dept">Department</label>
+              <select id="sp-filter-dept">
+                <option value="">All Departments</option>
+              </select>
+            </div>
+            <div class="field-inline">
+              <label for="sp-filter-semester">Semester</label>
+              <select id="sp-filter-semester">
+                <option value="">All Semesters</option>
+                <option value="1">Semester 1</option>
+                <option value="2">Semester 2</option>
+                <option value="3">Semester 3</option>
+                <option value="4">Semester 4</option>
+                <option value="5">Semester 5</option>
+                <option value="6">Semester 6</option>
+                <option value="7">Semester 7</option>
+                <option value="8">Semester 8</option>
+              </select>
+            </div>
+            <div class="field-inline">
+              <label for="sp-filter-subject">Subject</label>
+              <select id="sp-filter-subject">
+                <option value="">All Subjects</option>
+              </select>
+            </div>
+            <div class="field-inline">
+              <label for="sp-filter-year">Academic Year</label>
+              <select id="sp-filter-year">
+                <option value="">All Years</option>
+                <option value="2026-27" selected>2026-27</option>
+                <option value="2025-26">2025-26</option>
+              </select>
+            </div>
+            <div class="field-inline field-inline-search">
+              <label for="sp-search">Search</label>
+              <input type="search" id="sp-search" placeholder="Search title, subject, code, or description..." />
+            </div>
+            <button class="btn btn-ghost" id="sp-clear-filters">Clear</button>
+          </div>
+
+          <div class="sp-toolbar-meta"
+            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <div class="muted small" id="sp-results-count">Showing study plans...</div>
+            <div class="sp-meta-badges" id="sp-active-filters-strip"></div>
+          </div>
+
+          <div class="card-grid" id="sp-cards-grid"></div>
+
+          <div class="card table-card hidden" id="sp-table-wrap">
+            <div class="table-scroll">
+              <table class="data-table" id="sp-table">
+                <thead>
+                  <tr>
+                    <th>Study Plan Title</th>
+                    <th>Program</th>
+                    <th>Semester</th>
+                    <th>Subject</th>
+                    <th>Faculty In-Charge</th>
+                    <th>Credits</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="sp-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="empty-state hidden" id="sp-empty">
+            <div class="empty-icon" style="font-size: 2.5rem; margin-bottom: 0.5rem;">📚</div>
+            <h3>No study plans found</h3>
+            <p class="muted">No study plans match the selected program, semester or search criteria.</p>
+            <button class="btn btn-primary" id="sp-empty-create-btn" style="margin-top:1rem;">+ Create First Study
+              Plan</button>
+          </div>
+        </section>
+
+        <!-- ============ GENERATE TIMETABLE PAGE ============ -->
+        <section class="page hidden" id="section-generate" data-page="generate">
+          <div class="page-head">
+            <div>
+              <h1>Automatic Timetable Generator</h1>
+              <p class="muted">Select class, subjects, faculty and available rooms — the engine computes a clash-free
+                timetable</p>
+            </div>
+            <div class="page-head-actions">
+              <button type="button" class="btn btn-danger" id="gen-clear-class-btn" title="Delete current timetable for selected class">🗑 Delete Timetable for Class</button>
+              <button type="button" class="btn btn-secondary" id="gen-clear-all-btn" title="Delete entire timetable across all classes">🗑 Clear All Timetable</button>
+            </div>
+          </div>
+
+          <div class="card generate-card">
+            <form id="generate-form">
+              <div class="field">
+                <label for="gen-class">Target Class / Section</label>
+                <select id="gen-class" required></select>
+                <div id="gen-existing-warning" class="hidden" style="margin-top:0.6rem; padding:0.6rem 0.9rem; border-radius:var(--radius-sm); background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.35); font-size:0.85rem; display:flex; align-items:center; justify-content:space-between; gap:0.5rem;">
+                  <span id="gen-existing-warning-text"></span>
+                  <button type="button" class="btn btn-danger btn-ghost-sm" id="gen-warn-clear-btn" style="padding:0.25rem 0.6rem; font-size:0.78rem;">Delete Existing</button>
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Subjects to schedule (select subjects &amp; assign faculty)</label>
+                <div id="gen-subject-list" class="gen-subject-list"></div>
+              </div>
+
+              <div class="field">
+                <label for="gen-rooms">Candidate Classrooms</label>
+                <select id="gen-rooms" multiple size="5"></select>
+                <small class="muted">Hold Ctrl / Cmd to select multiple rooms</small>
+              </div>
+
+              <div class="field">
+                <label for="gen-periods">Max periods per day for this class</label>
+                <input type="number" id="gen-periods" min="1" max="7" value="7" required />
+              </div>
+
+              <button type="submit" class="btn btn-primary">Generate Timetable</button>
+            </form>
+
+            <div id="generate-result" class="generate-result hidden"></div>
+          </div>
+        </section>
+
+        <!-- ============ CLASSES MANAGEMENT ============ -->
+        <section class="page hidden" id="section-classes" data-page="classes">
+          <div class="page-head">
+            <div>
+              <h1>Class Management</h1>
+              <p class="muted">Academic programs, sections and student enrollment counts</p>
+            </div>
+            <div class="page-head-actions">
+              <input type="search" class="input-inline" id="class-search" placeholder="Search classes..." />
+              <button class="btn btn-primary" id="class-add-btn">+ Add Class</button>
+            </div>
+          </div>
+          <div class="card-grid" id="classes-grid"></div>
+          <p class="empty-state hidden" id="classes-empty">No classes found.</p>
+        </section>
+
+        <!-- ============ SECTIONS MANAGEMENT (New Dedicated Page) ============ -->
+        <section class="page hidden" id="section-sections" data-page="sections">
+          <div class="page-head">
+            <div>
+              <h1>Section Management</h1>
+              <p class="muted">Individual class sections, capacity allocations, and student rosters</p>
+            </div>
+            <div class="page-head-actions">
+              <input type="search" class="input-inline" id="section-search" placeholder="Search sections..." />
+              <select class="input-inline" id="section-class-filter">
+                <option value="">All classes</option>
+              </select>
+              <button class="btn btn-primary" id="section-add-btn">+ Add Section</button>
+            </div>
+          </div>
+          <div class="card table-card">
+            <div class="table-scroll">
+              <table class="data-table" id="sections-table">
+                <thead>
+                  <tr>
+                    <th>Class / Program</th>
+                    <th>Section</th>
+                    <th>Enrolled Students</th>
+                    <th>Weekly Periods</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <p class="empty-state hidden" id="sections-empty">No sections found.</p>
+          </div>
+        </section>
+
+        <!-- ============ TEACHERS MANAGEMENT ============ -->
+        <section class="page hidden" id="section-teachers" data-page="teachers">
+          <div class="page-head">
+            <div>
+              <h1>Teacher Management</h1>
+              <p class="muted">Faculty members, academic departments, assigned courses and slot availability</p>
+            </div>
+            <div class="page-head-actions">
+              <input type="search" class="input-inline" id="teacher-search" placeholder="Search teachers..." />
+              <select class="input-inline" id="teacher-dept-filter">
+                <option value="">All departments</option>
+              </select>
+              <button class="btn btn-secondary" id="teacher-absence-btn">🩺 Report Absence</button>
+              <button class="btn btn-primary" id="teacher-add-btn">+ Add Teacher</button>
+            </div>
+          </div>
+          <div class="card table-card">
+            <div class="table-scroll">
+              <table class="data-table" id="teachers-table">
+                <thead>
+                  <tr>
+                    <th>Faculty ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Subjects</th>
+                    <th>Available Days</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <p class="empty-state hidden" id="teachers-empty">No teachers found.</p>
+          </div>
+        </section>
+
+        <!-- ============ SUBJECTS MANAGEMENT ============ -->
+        <section class="page hidden" id="section-subjects" data-page="subjects">
+          <div class="page-head">
+            <div>
+              <h1>Subject Management</h1>
+              <p class="muted">University courses, subject codes, weekly period requirements and faculty links</p>
+            </div>
+            <div class="page-head-actions">
+              <input type="search" class="input-inline" id="subject-search" placeholder="Search subjects..." />
+              <button class="btn btn-primary" id="subject-add-btn">+ Add Subject</button>
+            </div>
+          </div>
+          <div class="card table-card">
+            <div class="table-scroll">
+              <table class="data-table" id="subjects-table">
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Subject</th>
+                    <th>Assigned Faculty</th>
+                    <th>Weekly Periods</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <p class="empty-state hidden" id="subjects-empty">No subjects found.</p>
+          </div>
+        </section>
+
+        <!-- ============ CLASSROOMS MANAGEMENT ============ -->
+        <section class="page hidden" id="section-classrooms" data-page="classrooms">
+          <div class="page-head">
+            <div>
+              <h1>Classroom Management</h1>
+              <p class="muted">Lecture halls, computer labs, science laboratories and seminar halls</p>
+            </div>
+            <div class="page-head-actions">
+              <input type="search" class="input-inline" id="room-search" placeholder="Search rooms..." />
+              <button class="btn btn-primary" id="room-add-btn">+ Add Room</button>
+            </div>
+          </div>
+          <div class="card-grid" id="rooms-grid"></div>
+          <p class="empty-state hidden" id="rooms-empty">No rooms found.</p>
+        </section>
+
+        <!-- ============ CALENDAR VIEW ============ -->
+        <section class="page hidden" id="section-calendar" data-page="calendar">
+          <div class="page-head">
+            <div>
+              <h1>Academic Calendar View</h1>
+              <p class="muted">Weekly schedule matrix with chronological navigation</p>
+            </div>
+            <div class="page-head-actions" style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+              <div class="cal-class-filter-wrap" style="display:inline-flex; align-items:center; gap:0.4rem;">
+                <label for="cal-filter-class" class="muted small" style="margin:0; white-space:nowrap;">Class:</label>
+                <select id="cal-filter-class" class="input-inline-sm" style="min-width:140px; padding:0.35rem 0.6rem; font-size:0.83rem; border-radius:var(--radius-sm); border:1px solid var(--border-subtle); background:var(--bg-card); color:var(--text-white);">
+                  <option value="">All Classes</option>
+                </select>
+              </div>
+              <button class="btn btn-secondary" id="cal-prev">← Previous</button>
+              <button class="btn btn-secondary" id="cal-today">This Week</button>
+              <button class="btn btn-secondary" id="cal-next">Next →</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="cal-range" id="cal-range-label" style="font-weight: 700; margin-bottom: 1rem;"></div>
+            <div class="table-scroll">
+              <table class="grid-table" id="calendar-grid" aria-label="Calendar week view"></table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ ANALYTICS DASHBOARD ============ -->
+        <section class="page hidden" id="section-analytics" data-page="analytics">
+          <div class="page-head">
+            <div>
+              <h1>Timetable Analytics</h1>
+              <p class="muted">Faculty workload metrics, classroom utilization rates and scheduling conflict summary</p>
+            </div>
+          </div>
+          <div
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
+            <div class="card">
+              <div class="card-head">
+                <h2>Teacher Workload</h2>
+                <span class="muted small">Periods / week</span>
+              </div>
+              <div id="chart-teacher-load" class="bar-chart"></div>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h2>Classes per Day</h2>
+                <span class="muted small">Distribution across week</span>
+              </div>
+              <div id="chart-classes-day" class="bar-chart"></div>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h2>Subject Distribution</h2>
+                <span class="muted small">Total scheduled periods</span>
+              </div>
+              <div id="chart-subject-dist" class="bar-chart"></div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem;">
+            <div class="card">
+              <div class="card-head">
+                <h2>Room Utilisation</h2>
+                <span class="muted small">Most → least occupied</span>
+              </div>
+              <div id="chart-room-usage" class="bar-chart"></div>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h2>Available Free Rooms</h2>
+              </div>
+              <div id="analytics-free-rooms" class="list-simple"></div>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h2>Conflict Summary</h2>
+              </div>
+              <div id="analytics-conflicts" class="list-simple"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ ANNOUNCEMENTS ============ -->
+        <section class="page hidden" id="section-announcements" data-page="announcements">
+          <div class="page-head">
+            <div>
+              <h1>Announcements</h1>
+              <p class="muted">Broadcast schedule modifications, room reallocations and exam updates</p>
+            </div>
+            <div class="page-head-actions">
+              <button class="btn btn-primary" id="announcement-add-btn">+ New Announcement</button>
+            </div>
+          </div>
+          <div id="announcements-list" class="announce-list" style="display:flex; flex-direction:column; gap:1rem;">
+          </div>
+          <p class="empty-state hidden" id="announcements-empty">No announcements yet.</p>
+        </section>
+
+        <!-- ============ NOTIFICATIONS ============ -->
+        <section class="page hidden" id="section-notifications" data-page="notifications">
+          <div class="page-head">
+            <div>
+              <h1>Notifications</h1>
+              <p class="muted">System activity, timetable overrides and scheduling alerts</p>
+            </div>
+            <div class="page-head-actions">
+              <button class="btn btn-secondary" id="notif-mark-all">Mark all as read</button>
+              <button class="btn btn-ghost" id="notif-clear-all">Clear all</button>
+            </div>
+          </div>
+          <div id="notifications-list" class="notif-list" style="display:flex; flex-direction:column; gap:0.75rem;">
+          </div>
+          <p class="empty-state hidden" id="notifications-empty">All caught up — no notifications.</p>
+        </section>
+
+        <!-- ============ AUDIT LOG ============ -->
+        <section class="page hidden" id="section-audit" data-page="audit">
+          <div class="page-head">
+            <div>
+              <h1>Audit Log</h1>
+              <p class="muted">Chronological traceability of all create, update, delete, override and substitute events
+              </p>
+            </div>
+            <div class="page-head-actions">
+              <select class="input-inline" id="audit-action-filter">
+                <option value="">All actions</option>
+                <option value="create">Created</option>
+                <option value="update">Updated</option>
+                <option value="delete">Deleted</option>
+                <option value="override">Overridden</option>
+                <option value="generate">Generated</option>
+                <option value="substitute">Substitute</option>
+              </select>
+              <input type="search" class="input-inline" id="audit-search" placeholder="Search audit history..." />
+              <button class="btn btn-ghost" id="audit-clear-btn">Clear log</button>
+            </div>
+          </div>
+          <div id="audit-list" class="audit-list" style="display:flex; flex-direction:column; gap:0.75rem;"></div>
+          <p class="empty-state hidden" id="audit-empty">No activity recorded yet.</p>
+        </section>
+
+        <!-- ============ SETTINGS ============ -->
+        <section class="page hidden" id="section-settings" data-page="settings">
+          <div class="page-head">
+            <div>
+              <h1>Settings</h1>
+              <p class="muted">Workspace preferences, account profile and local cache options</p>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 1.25rem; max-width: 640px;">
+            <div class="card settings-card">
+              <h2 style="margin-bottom: 1rem;">Appearance</h2>
+              <div class="field-row">
+                <span>Theme Mode</span>
+                <div class="segmented-control" id="theme-segmented">
+                  <button type="button" data-theme="dark" class="seg-btn active">🌙 Dark (Recommended)</button>
+                  <button type="button" data-theme="light" class="seg-btn">☀ Light</button>
+                </div>
+              </div>
+            </div>
+            <div class="card settings-card">
+              <h2 style="margin-bottom: 1rem;">Profile</h2>
+              <form id="profile-form">
+                <div class="field">
+                  <label for="settings-name">Display Name</label>
+                  <input type="text" id="settings-name" required />
+                </div>
+                <div class="field">
+                  <label for="settings-role">Academic Role</label>
+                  <input type="text" id="settings-role" required />
+                </div>
+                <button type="submit" class="btn btn-primary">Save Profile</button>
+              </form>
+            </div>
+            <div class="card settings-card">
+              <h2 style="margin-bottom: 1rem;">Data Management</h2>
+              <p class="muted" style="margin-bottom: 1rem;">Connected to PostgreSQL API at
+                <code>http://localhost:5000</code> with client-side cache fallback.
+              </p>
+              <div class="field-row" style="gap: 0.75rem; justify-content: flex-start;">
+                <button class="btn btn-secondary" id="settings-export-all">Export All Data (JSON)</button>
+                <button class="btn btn-danger" id="settings-reset-all">Reset to Demo Dataset</button>
+            <div class="card settings-card" id="settings-rules-card">
+              <h2 style="margin-bottom: 0.5rem;">Teacher Timetable Rules &amp; Workload Constraints</h2>
+              <p class="muted" style="margin-bottom: 1rem; font-size: 0.88rem;">
+                Configure maximum daily hours, weekly workload ceilings, consecutive periods, mandatory breaks, and scheduling preference modes.
+              </p>
+              <div class="rules-quick-stats" style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.25rem;">
+                <span class="pill pill-info" id="settings-pill-daily">Max Daily: 4 hrs</span>
+                <span class="pill pill-info" id="settings-pill-weekly">Max Weekly: 16 hrs</span>
+                <span class="pill pill-info" id="settings-pill-consecutive">Consecutive: 2 max</span>
+                <span class="pill pill-info" id="settings-pill-break">Break: 1 slot</span>
+              </div>
+              <button type="button" class="btn btn-secondary" id="settings-goto-rules-btn" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                <span>⚖️</span> Manage Teacher Timetable Rules
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ TEACHER TIMETABLE RULES & CONSTRAINTS (ADMIN) ============ -->
+        <section class="page hidden" id="section-rules" data-page="rules">
+          <div class="page-head" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+            <div>
+              <h1>Teacher Timetable Rules &amp; Workload Constraints</h1>
+              <p class="muted">Configure university-wide faculty limits, hard conflict boundaries, and soft scheduling preferences.</p>
+            </div>
+            <div style="display:flex; gap:0.65rem; align-items:center; flex-wrap:wrap;">
+              <button class="btn btn-secondary" id="rules-reset-defaults-btn" title="Reset all rules to university baseline defaults">
+                ↺ Restore University Defaults
+              </button>
+              <button class="btn btn-primary" id="rules-save-workload-btn">
+                💾 Save Global Limits
+              </button>
+            </div>
+          </div>
+
+          <!-- 4 Stat Metric Cards -->
+          <div class="rules-stat-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
+            <div class="card stat-card" style="padding:1.15rem; border-left:4px solid #6366f1;">
+              <div class="muted small" style="text-transform:uppercase; letter-spacing:0.5px; font-weight:700;">Max Daily Hours</div>
+              <div style="display:flex; align-items:baseline; gap:0.5rem; margin-top:0.4rem;">
+                <span style="font-size:1.85rem; font-weight:800; color:#fff;" id="metric-max-daily">4</span>
+                <span class="muted small">periods / day</span>
+              </div>
+              <div class="muted small" style="margin-top:0.25rem;">Daily ceiling per faculty</div>
+            </div>
+
+            <div class="card stat-card" style="padding:1.15rem; border-left:4px solid #3b82f6;">
+              <div class="muted small" style="text-transform:uppercase; letter-spacing:0.5px; font-weight:700;">Max Weekly Hours</div>
+              <div style="display:flex; align-items:baseline; gap:0.5rem; margin-top:0.4rem;">
+                <span style="font-size:1.85rem; font-weight:800; color:#fff;" id="metric-max-weekly">16</span>
+                <span class="muted small">periods / week</span>
+              </div>
+              <div class="muted small" style="margin-top:0.25rem;">Faculty weekly quota</div>
+            </div>
+
+            <div class="card stat-card" style="padding:1.15rem; border-left:4px solid #f59e0b;">
+              <div class="muted small" style="text-transform:uppercase; letter-spacing:0.5px; font-weight:700;">Max Consecutive</div>
+              <div style="display:flex; align-items:baseline; gap:0.5rem; margin-top:0.4rem;">
+                <span style="font-size:1.85rem; font-weight:800; color:#fff;" id="metric-max-consecutive">2</span>
+                <span class="muted small">periods back-to-back</span>
+              </div>
+              <div class="muted small" style="margin-top:0.25rem;">Fatigue prevention cap</div>
+            </div>
+
+            <div class="card stat-card" style="padding:1.15rem; border-left:4px solid #10b981;">
+              <div class="muted small" style="text-transform:uppercase; letter-spacing:0.5px; font-weight:700;">Minimum Rest Break</div>
+              <div style="display:flex; align-items:baseline; gap:0.5rem; margin-top:0.4rem;">
+                <span style="font-size:1.85rem; font-weight:800; color:#fff;" id="metric-min-break">1</span>
+                <span class="muted small">period (1 hour)</span>
+              </div>
+              <div class="muted small" style="margin-top:0.25rem;">After consecutive block</div>
+            </div>
+          </div>
+
+          <!-- University Workload Quick Configuration Card -->
+          <div class="card" style="margin-bottom:1.5rem; padding:1.25rem;">
+            <div class="card-head" style="margin-bottom:1.1rem; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <h2 style="font-size:1.15rem; font-weight:700;">🏛 Global University Workload Policy</h2>
+                <span class="muted small">Configurable university defaults &amp; scheduling preferences</span>
+              </div>
+            </div>
+            <form id="global-workload-form" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); gap:1.2rem;">
+              <div class="field">
+                <label for="cfg-max-daily">Max Daily Teaching Hours</label>
+                <input type="number" id="cfg-max-daily" min="1" max="8" value="4" required />
+                <small class="muted">Maximum periods a faculty member may teach per day</small>
+              </div>
+
+              <div class="field">
+                <label for="cfg-max-weekly">Max Weekly Teaching Hours</label>
+                <input type="number" id="cfg-max-weekly" min="1" max="40" value="16" required />
+                <small class="muted">Total weekly periods ceiling per teacher</small>
+              </div>
+
+              <div class="field">
+                <label for="cfg-max-consecutive">Max Consecutive Teaching Periods</label>
+                <input type="number" id="cfg-max-consecutive" min="1" max="5" value="2" required />
+                <small class="muted">Maximum back-to-back lectures allowed without rest</small>
+              </div>
+
+              <div class="field">
+                <label for="cfg-min-break">Minimum Break Duration (Slots)</label>
+                <input type="number" id="cfg-min-break" min="0" max="3" value="1" required />
+                <small class="muted">Mandatory rest periods required after consecutive run</small>
+              </div>
+
+              <div class="field" style="grid-column: 1 / -1;">
+                <label>Institutional Preferred Working Days</label>
+                <div style="display:flex; gap:1.4rem; flex-wrap:wrap; margin-top:0.4rem;" id="cfg-pref-days-container">
+                  <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;"><input type="checkbox" name="pref_day" value="Monday" checked /> Monday</label>
+                  <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;"><input type="checkbox" name="pref_day" value="Tuesday" checked /> Tuesday</label>
+                  <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;"><input type="checkbox" name="pref_day" value="Wednesday" checked /> Wednesday</label>
+                  <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;"><input type="checkbox" name="pref_day" value="Thursday" checked /> Thursday</label>
+                  <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;"><input type="checkbox" name="pref_day" value="Friday" checked /> Friday</label>
+                  <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;"><input type="checkbox" name="pref_day" value="Saturday" /> Saturday</label>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="cfg-pref-time-range">Preferred Daily Hours Window</label>
+                <select id="cfg-pref-time-range">
+                  <option value="08:00 - 15:00">08:00 - 15:00 (Early Shift)</option>
+                  <option value="09:00 - 16:00" selected>09:00 - 16:00 (Standard Academic Hours)</option>
+                  <option value="10:00 - 17:00">10:00 - 17:00 (Afternoon Shift)</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="cfg-max-gap">Max Allowed Schedule Gap (Periods)</label>
+                <input type="number" id="cfg-max-gap" min="1" max="5" value="2" />
+                <small class="muted">Warn when idle gaps between lectures exceed this limit</small>
+              </div>
+
+              <div class="field" style="display:flex; flex-direction:column; justify-content:center;">
+                <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; font-weight:600;">
+                  <input type="checkbox" id="cfg-dept-fallback" checked />
+                  <span>Allow Subject Department Fallback</span>
+                </label>
+                <small class="muted">Permits eligible faculty in the same department to teach subjects</small>
+              </div>
+
+              <div class="field" style="display:flex; flex-direction:column; justify-content:center;">
+                <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; font-weight:600;">
+                  <input type="checkbox" id="cfg-workload-balance" checked />
+                  <span>Fair Faculty Workload Balancing</span>
+                </label>
+                <small class="muted">Equitably distribute teaching hours across eligible faculty members</small>
+              </div>
+            </form>
+          </div>
+
+          <!-- Comprehensive 12 Rules Table -->
+          <div class="card table-card" style="margin-bottom:1.5rem;">
+            <div class="card-head" style="padding:1rem 1.25rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+              <div>
+                <h2 style="font-size:1.15rem; font-weight:700;">⚖️ Configurable Timetable Rules Engine (12 Rules)</h2>
+                <span class="muted small">Toggle rules on/off and switch between <strong>Mandatory (Blocking Error)</strong> and <strong>Scheduling Preference (Soft Warning)</strong></span>
+              </div>
+            </div>
+            <div class="table-scroll">
+              <table class="data-table" id="rules-table">
+                <thead>
+                  <tr>
+                    <th>Rule Key &amp; Name</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Enforcement Mode</th>
+                    <th>Status</th>
+                    <th>Configured Value</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="rules-table-body">
+                  <tr><td colspan="7" class="muted text-center">Loading timetable rules...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Faculty Custom Preferences Review Section -->
+          <div class="card table-card" style="margin-bottom:1.5rem;">
+            <div class="card-head" style="padding:1rem 1.25rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+              <div>
+                <h2 style="font-size:1.15rem; font-weight:700;">🧑‍🏫 Faculty Custom Preference Requests</h2>
+                <span class="muted small">Review and approve customized working hours and availability submitted by teachers</span>
+              </div>
+            </div>
+            <div class="table-scroll">
+              <table class="data-table" id="teacher-prefs-table">
+                <thead>
+                  <tr>
+                    <th>Faculty Member</th>
+                    <th>Department</th>
+                    <th>Preferred Days</th>
+                    <th>Preferred Slots</th>
+                    <th>Max Daily</th>
+                    <th>Notes</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="teacher-prefs-table-body">
+                  <tr><td colspan="8" class="muted text-center">Loading faculty preference requests...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ MANAGE TEACHER ACCOUNTS PAGE (ADMIN) ============ -->
+        <section class="page hidden" id="section-teacher-accounts" data-page="teacher-accounts">
+          <div class="page-head" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+            <div>
+              <h1>Manage Teacher Accounts</h1>
+              <p class="muted">Provision individual login credentials, manage faculty access, and reset passwords.</p>
+            </div>
+            <div style="display:flex; gap:0.65rem; align-items:center; flex-wrap:wrap;">
+              <button class="btn btn-warning" id="ta-batch-btn" style="font-weight:700; background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; border:none; box-shadow:0 2px 8px rgba(245,158,11,0.25); cursor:pointer;">
+                ⚡ Create Missing Accounts
+              </button>
+              <button class="btn btn-primary" id="ta-add-account-btn">+ Provision Account</button>
+            </div>
+          </div>
+
+          <!-- 4 Stat Metric Cards -->
+          <div class="ta-stat-grid" style="margin-bottom:1.5rem;">
+            <div class="ta-stat-card">
+              <div class="ta-stat-ico ta-ico-total">🧑‍🏫</div>
+              <div>
+                <div class="ta-stat-num" id="ta-stat-total">1,000</div>
+                <div class="ta-stat-label">Total Faculty Members</div>
+              </div>
+            </div>
+            <div class="ta-stat-card">
+              <div class="ta-stat-ico ta-ico-active">✅</div>
+              <div>
+                <div class="ta-stat-num" id="ta-stat-active">0</div>
+                <div class="ta-stat-label">Active Login Accounts</div>
+              </div>
+            </div>
+            <div class="ta-stat-card">
+              <div class="ta-stat-ico ta-ico-inactive">⛔</div>
+              <div>
+                <div class="ta-stat-num" id="ta-stat-inactive">0</div>
+                <div class="ta-stat-label">Inactive / Suspended</div>
+              </div>
+            </div>
+            <div class="ta-stat-card">
+              <div class="ta-stat-ico ta-ico-uncreated">⏳</div>
+              <div>
+                <div class="ta-stat-num" id="ta-stat-uncreated">1,000</div>
+                <div class="ta-stat-label">Accounts Not Created</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Search & Filter Toolbar -->
+          <div class="ta-toolbar" style="margin-bottom:1.25rem;">
+            <div class="ta-toolbar-search">
+              <input type="search" id="ta-search" placeholder="Search by teacher name, code (FAC-XXXX), or email..." style="width:100%;" />
+            </div>
+            <div class="field-inline">
+              <label for="ta-filter-status" style="margin-right:0.35rem; font-size:0.82rem; color:var(--text-muted);">Status:</label>
+              <select id="ta-filter-status">
+                <option value="all">All Teachers</option>
+                <option value="active">Active Accounts</option>
+                <option value="inactive">Inactive Accounts</option>
+                <option value="uncreated">No Account Yet</option>
+              </select>
+            </div>
+            <div class="field-inline">
+              <label for="ta-filter-dept" style="margin-right:0.35rem; font-size:0.82rem; color:var(--text-muted);">Department:</label>
+              <select id="ta-filter-dept">
+                <option value="">All Departments</option>
+              </select>
+            </div>
+            <button class="btn btn-ghost" id="ta-clear-filters">Clear</button>
+          </div>
+
+          <!-- Table Container -->
+          <div class="card table-card">
+            <div class="table-scroll">
+              <table class="data-table" id="ta-table">
+                <thead>
+                  <tr>
+                    <th>Teacher ID</th>
+                    <th>Full Name</th>
+                    <th>Department</th>
+                    <th>Account Email</th>
+                    <th>Account Status</th>
+                    <th>Last Login</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="ta-table-body">
+                  <tr>
+                    <td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted);">Loading teacher accounts...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pagination-bar" id="ta-pagination" style="display:flex; justify-content:space-between; align-items:center; padding:0.85rem 1.25rem; border-top:1px solid var(--border); font-size:0.85rem;">
+              <span id="ta-page-info" class="muted">Showing page 1 of 1</span>
+              <div style="display:flex; gap:0.5rem; align-items:center;">
+                <button class="btn btn-ghost-sm" id="ta-prev-page" disabled>Previous</button>
+                <button class="btn btn-ghost-sm" id="ta-next-page">Next</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ TEACHER PERSONALIZED DASHBOARD ============ -->
+        <section class="page hidden" id="section-teacher-dashboard" data-page="teacher-dashboard">
+          <!-- Welcome Hero Banner -->
+          <div class="teacher-welcome-card">
+            <div>
+              <h1 id="teacher-dash-greeting" style="color:var(--text-white); font-size:1.6rem; font-weight:800; margin-bottom:0.3rem;">Welcome, Faculty Member</h1>
+              <p id="teacher-dash-subgreeting" class="muted" style="margin-bottom:0.75rem;">Your personalized university teaching schedule, assigned classes, and clash-free academic timetable.</p>
+              <div style="display:flex; gap:0.65rem; align-items:center; flex-wrap:wrap;">
+                <span class="badge badge-info" id="teacher-dept-badge">Department Faculty</span>
+                <span class="badge badge-success" id="teacher-status-badge">Account Active</span>
+              </div>
+            </div>
+            <div style="display:flex; gap:0.65rem; align-items:center; flex-wrap:wrap; z-index:2;">
+              <button class="btn btn-warning" id="teacher-dash-makeup-btn" style="font-weight:700; background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; border:none; box-shadow:0 2px 10px rgba(245,158,11,0.3); cursor:pointer;">
+                ⏰ Schedule Makeup Class
+              </button>
+              <button class="btn btn-primary" id="teacher-dash-view-tt-btn">🗓 View Full Timetable</button>
+            </div>
+          </div>
+
+          <!-- 4 Stat Metric Cards -->
+          <div class="stat-grid" style="margin-bottom:1.5rem;">
+            <div class="stat-card">
+              <div class="stat-ico" style="background:rgba(99,102,241,0.15); color:#818cf8;">📅</div>
+              <div>
+                <div class="stat-val" id="tdash-today-count">0</div>
+                <div class="stat-lbl">Classes Scheduled Today</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-ico" style="background:rgba(59,130,246,0.15); color:#60a5fa;">⏱️</div>
+              <div>
+                <div class="stat-val" id="tdash-weekly-count">0</div>
+                <div class="stat-lbl">Weekly Lecture Sessions</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-ico" style="background:rgba(16,185,129,0.15); color:#34d399;">📘</div>
+              <div>
+                <div class="stat-val" id="tdash-subjects-count">0</div>
+                <div class="stat-lbl">Assigned Subjects</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-ico" style="background:rgba(245,158,11,0.15); color:#fbbf24;">🎓</div>
+              <div>
+                <div class="stat-val" id="tdash-classes-count">0</div>
+                <div class="stat-lbl">Assigned Classes &amp; Sections</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2-Column Layout -->
+          <div class="dashboard-layout">
+            <!-- Left: Today's Classes + Weekly Schedule Preview -->
+            <div class="dashboard-main">
+              <!-- Today's Schedule Card -->
+              <div class="card" style="margin-bottom:1.5rem;">
+                <div class="card-head" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                  <div>
+                    <h2 style="font-size:1.15rem;">Today's Classes &amp; Lectures</h2>
+                    <span class="muted small" id="tdash-today-date">Real-time schedule for today</span>
+                  </div>
+                  <button class="btn btn-ghost-sm" id="tdash-refresh-today-btn">🔄 Refresh</button>
+                </div>
+                <div id="tdash-today-list" class="teacher-today-timeline">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+
+              <!-- Weekly Schedule Grid Preview -->
+              <div class="card">
+                <div class="card-head" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                  <div>
+                    <h2 style="font-size:1.15rem;">My Weekly Teaching Schedule</h2>
+                    <span class="muted small">Clash-free weekly grid for your assigned courses</span>
+                  </div>
+                </div>
+                <div class="table-scroll">
+                  <table class="grid-table" id="tdash-weekly-grid">
+                    <thead>
+                      <tr>
+                        <th>Time Slot</th>
+                        <th>Mon</th>
+                        <th>Tue</th>
+                        <th>Wed</th>
+                        <th>Thu</th>
+                        <th>Fri</th>
+                        <th>Sat</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tdash-weekly-grid-body"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column Widgets -->
+            <div class="dashboard-side">
+              <!-- Assigned Subjects Widget -->
+              <div class="card" style="margin-bottom:1.25rem;">
+                <div class="card-head" style="margin-bottom:0.75rem;">
+                  <h3 style="font-size:1rem;">My Courses &amp; Subjects</h3>
+                </div>
+                <div id="tdash-subjects-list" style="display:flex; flex-direction:column; gap:0.6rem;">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+
+              <!-- Assigned Classes & Sections Widget -->
+              <div class="card" style="margin-bottom:1.25rem;">
+                <div class="card-head" style="margin-bottom:0.75rem;">
+                  <h3 style="font-size:1rem;">Assigned Classes &amp; Sections</h3>
+                </div>
+                <div id="tdash-classes-list" style="display:flex; flex-direction:column; gap:0.6rem;">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+
+              <!-- Quick Teacher Actions -->
+              <div class="card">
+                <div class="card-head" style="margin-bottom:0.75rem;">
+                  <h3 style="font-size:1rem;">Quick Faculty Actions</h3>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                  <button class="btn btn-secondary btn-block" id="teacher-qa-makeup" style="justify-content:flex-start; text-align:left;">
+                    <span>⏰</span> Schedule Makeup Class
+                  </button>
+                  <button class="btn btn-secondary btn-block" id="teacher-qa-absence" style="justify-content:flex-start; text-align:left;">
+                    <span>🩺</span> Report Absence / Leave
+                  </button>
+                  <button class="btn btn-secondary btn-block" id="teacher-qa-profile" style="justify-content:flex-start; text-align:left;">
+                    <span>👤</span> View / Edit My Profile
+                  </button>
+                  <button class="btn btn-secondary btn-block" id="teacher-qa-password" style="justify-content:flex-start; text-align:left;">
+                    <span>🔑</span> Change Account Password
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ TEACHER MY TIMETABLE PAGE ============ -->
+        <section class="page hidden" id="section-teacher-timetable" data-page="teacher-timetable">
+          <div class="page-head" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+            <div>
+              <h1>My Teaching Timetable</h1>
+              <p class="muted">Your personalized university schedule across all assigned courses and makeup sessions.</p>
+            </div>
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+              <button class="btn btn-warning" id="tt-teacher-makeup-btn">⏰ + Makeup Class</button>
+              <button class="btn btn-secondary" id="tt-teacher-print-btn">🖨 Print / Export</button>
+            </div>
+          </div>
+
+          <!-- Day Filter Strip -->
+          <div class="timetable-filter-bar" style="display:flex; gap:0.5rem; margin-bottom:1.25rem; flex-wrap:wrap;">
+            <button class="btn btn-secondary active teacher-tt-day-btn" data-day="all">All Days</button>
+            <button class="btn btn-ghost teacher-tt-day-btn" data-day="Monday">Monday</button>
+            <button class="btn btn-ghost teacher-tt-day-btn" data-day="Tuesday">Tuesday</button>
+            <button class="btn btn-ghost teacher-tt-day-btn" data-day="Wednesday">Wednesday</button>
+            <button class="btn btn-ghost teacher-tt-day-btn" data-day="Thursday">Thursday</button>
+            <button class="btn btn-ghost teacher-tt-day-btn" data-day="Friday">Friday</button>
+            <button class="btn btn-ghost teacher-tt-day-btn" data-day="Saturday">Saturday</button>
+          </div>
+
+          <div class="card table-card">
+            <div class="table-scroll">
+              <table class="data-table" id="teacher-tt-table">
+                <thead>
+                  <tr>
+                    <th>Day</th>
+                    <th>Time Slot</th>
+                    <th>Subject</th>
+                    <th>Class &amp; Section</th>
+                    <th>Classroom</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="teacher-tt-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ TEACHER MY SUBJECTS PAGE ============ -->
+        <section class="page hidden" id="section-teacher-subjects" data-page="teacher-subjects">
+          <div class="page-head" style="margin-bottom:1.5rem;">
+            <div>
+              <h1>My Assigned Subjects</h1>
+              <p class="muted">Academic courses and curriculum modules currently assigned to your faculty profile.</p>
+            </div>
+          </div>
+          <div class="card-grid" id="teacher-subjects-grid">
+            <!-- Populated dynamically -->
+          </div>
+        </section>
+
+        <!-- ============ TEACHER MY CLASSES PAGE ============ -->
+        <section class="page hidden" id="section-teacher-classes" data-page="teacher-classes">
+          <div class="page-head" style="margin-bottom:1.5rem;">
+            <div>
+              <h1>My Assigned Classes &amp; Sections</h1>
+              <p class="muted">Student cohorts, programs, and class sections under your academic instruction.</p>
+            </div>
+          </div>
+          <div class="card-grid" id="teacher-classes-grid">
+            <!-- Populated dynamically -->
+          </div>
+        </section>
+
+        <!-- ============ TEACHER MAKEUP CLASSES PAGE ============ -->
+        <section class="page hidden" id="section-teacher-makeup" data-page="teacher-makeup">
+          <div class="page-head" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+            <div>
+              <h1>My Makeup Classes</h1>
+              <p class="muted">Manage and arrange replacement lectures for missed sessions, holidays, or lab catchups.</p>
+            </div>
+            <button class="btn btn-warning" id="btn-schedule-makeup-page">⏰ + Schedule Makeup Class</button>
+          </div>
+          <div class="card table-card">
+            <div class="table-scroll">
+              <table class="data-table" id="teacher-makeup-table">
+                <thead>
+                  <tr>
+                    <th>Makeup Date</th>
+                    <th>Day &amp; Time Slot</th>
+                    <th>Subject</th>
+                    <th>Class &amp; Section</th>
+                    <th>Classroom</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="teacher-makeup-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ TEACHER AVAILABILITY MATRIX PAGE ============ -->
+        <section class="page hidden" id="section-teacher-availability" data-page="teacher-availability">
+          <div class="page-head" style="margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+            <div>
+              <h1>My Workload &amp; Availability Preferences</h1>
+              <p class="muted">View your active teaching workload, university-configured constraints, and submit preferred hours.</p>
+            </div>
+            <div id="tp-approval-badge-wrap">
+              <span class="pill pill-success" id="tp-approval-badge" style="font-weight:700; padding:0.4rem 0.8rem;">Status: Approved</span>
+            </div>
+          </div>
+
+          <!-- Teacher Workload & University Limits 4 Stat Grid -->
+          <div class="rules-stat-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
+            <div class="card stat-card" style="padding:1.15rem; border-left:4px solid #6366f1;">
+              <div class="muted small" style="text-transform:uppercase; letter-spacing:0.5px; font-weight:700;">My Weekly Load</div>
+              <div style="display:flex; align-items:baseline; gap:0.5rem; margin-top:0.4rem;">
+                <span style="font-size:1.85rem; font-weight:800; color:#fff;" id="tp-metric-weekly">0</span>
+                <span class="muted small" id="tp-metric-weekly-limit">/ 16 periods max</span>
+              </div>
+              <div class="muted small" id="tp-metric-weekly-status" style="margin-top:0.25rem; color:#10b981;">✓ Within university quota</div>
+            </div>
+
+            <div class="card stat-card" style="padding:1.15rem; border-left:4px solid #3b82f6;">
+              <div class="muted small" style="text-transform:uppercase; letter-spacing:0.5px; font-weight:700;">Max Daily Hours</div>
+              <div style="display:flex; align-items:baseline; gap:0.5rem; margin-top:0.4rem;">
+                <span style="font-size:1.85rem; font-weight:800; color:#fff;" id="tp-metric-daily-limit">4</span>
+                <span class="muted small">periods ceiling</span>
+              </div>
+              <div class="muted small" style="margin-top:0.25rem;">Configured by University</div>
+            </div>
+
+            <div class="card stat-card" style="padding:1.15rem; border-left:4px solid #f59e0b;">
+              <div class="muted small" style="text-transform:uppercase; letter-spacing:0.5px; font-weight:700;">Max Consecutive</div>
+              <div style="display:flex; align-items:baseline; gap:0.5rem; margin-top:0.4rem;">
+                <span style="font-size:1.85rem; font-weight:800; color:#fff;" id="tp-metric-consecutive-limit">2</span>
+                <span class="muted small">periods limit</span>
+              </div>
+              <div class="muted small" style="margin-top:0.25rem;">Fatigue prevention cap</div>
+            </div>
+
+            <div class="card stat-card" style="padding:1.15rem; border-left:4px solid #10b981;">
+              <div class="muted small" style="text-transform:uppercase; letter-spacing:0.5px; font-weight:700;">Required Rest Break</div>
+              <div style="display:flex; align-items:baseline; gap:0.5rem; margin-top:0.4rem;">
+                <span style="font-size:1.85rem; font-weight:800; color:#fff;" id="tp-metric-break-limit">1</span>
+                <span class="muted small">period (1 hour)</span>
+              </div>
+              <div class="muted small" style="margin-top:0.25rem;">Mandatory rest between blocks</div>
+            </div>
+          </div>
+
+          <!-- Personal Preferences Form Card -->
+          <div class="card" style="margin-bottom:1.5rem; padding:1.25rem;">
+            <div class="card-head" style="margin-bottom:1rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+              <div>
+                <h2 style="font-size:1.15rem; font-weight:700;">📝 My Preferred Teaching Hours &amp; Schedule</h2>
+                <span class="muted small">Submit personal preferences to guide the timetable generator. (Cannot bypass university hard limits)</span>
+              </div>
+              <button class="btn btn-primary" id="tp-submit-btn">💾 Save Preferences</button>
+            </div>
+
+            <form id="teacher-pref-form" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); gap:1.2rem;">
+              <div class="field" style="grid-column: 1 / -1;">
+                <label>Preferred Teaching Days</label>
+                <div style="display:flex; gap:1.4rem; flex-wrap:wrap; margin-top:0.4rem;" id="tp-days-container">
+                  <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;"><input type="checkbox" name="tp_day" value="Monday" checked /> Monday</label>
+                  <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;"><input type="checkbox" name="tp_day" value="Tuesday" checked /> Tuesday</label>
+                  <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;"><input type="checkbox" name="tp_day" value="Wednesday" checked /> Wednesday</label>
+                  <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;"><input type="checkbox" name="tp_day" value="Thursday" checked /> Thursday</label>
+                  <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;"><input type="checkbox" name="tp_day" value="Friday" checked /> Friday</label>
+                  <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;"><input type="checkbox" name="tp_day" value="Saturday" /> Saturday</label>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="tp-pref-slots-type">Preferred Time Window</label>
+                <select id="tp-pref-slots-type">
+                  <option value="morning">Morning Preference (8:00 AM - 12:00 PM)</option>
+                  <option value="standard" selected>Standard Academic (9:00 AM - 2:00 PM)</option>
+                  <option value="afternoon">Afternoon Preference (1:00 PM - 5:00 PM)</option>
+                  <option value="all">Full Day Flexibility (All Slots)</option>
+                </select>
+                <small class="muted">Generator prioritizes slots in this window</small>
+              </div>
+
+              <div class="field">
+                <label for="tp-max-daily">Preferred Daily Period Ceiling</label>
+                <input type="number" id="tp-max-daily" min="1" max="4" value="4" />
+                <small class="muted">Personal request (must be &le; university limit of 4)</small>
+              </div>
+
+              <div class="field" style="grid-column: 1 / -1;">
+                <label for="tp-notes">Special Scheduling Requests / Research Block Notes</label>
+                <textarea id="tp-notes" rows="2" placeholder="e.g. Request no lectures on Thursday afternoons for departmental research block or lab mentorship..."></textarea>
+              </div>
+            </form>
+          </div>
+
+          <!-- Weekly Availability Time Slots Grid -->
+          <div class="card table-card">
+            <div class="card-head" style="padding:1rem 1.25rem;">
+              <h2 style="font-size:1.15rem; font-weight:700;">📅 Time Slot Availability Matrix</h2>
+              <span class="muted small">Green indicates slots where you are available to teach. Click slots to toggle availability.</span>
+            </div>
+            <div class="table-scroll">
+              <table class="grid-table" id="teacher-avail-table">
+                <thead>
+                  <tr>
+                    <th>Time Slot</th>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                    <th>Saturday</th>
+                  </tr>
+                </thead>
+                <tbody id="teacher-avail-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <footer class="app-footer">
+        <p>StudyPlan — Smart Classroom &amp; Timetable Scheduler &bull; University Academic Management Platform</p>
+      </footer>
+    </div>
+  </div>
+
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+
+  <!-- ============ REUSABLE MODALS ============ -->
+
+  <!-- Form Modal -->
+  <dialog id="modal-form" class="modal">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <h2 id="modal-form-title">Title</h2>
+        <button class="icon-btn" id="modal-form-close" aria-label="Close dialog">✕</button>
+      </div>
+      <form id="modal-form-el">
+        <div id="modal-form-body" class="modal-body"></div>
+        <div class="modal-foot">
+          <button type="button" class="btn btn-danger hidden" id="modal-form-delete" style="margin-right:auto;">🗑 Delete Entry</button>
+          <button type="button" class="btn btn-ghost" id="modal-form-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="modal-form-submit">Save</button>
+        </div>
       </form>
-    </section>
-  </div>
-</main>
-
-<!-- ============ APP SHELL ============ -->
-<div id="app-shell" class="app-shell hidden">
-
-  <!-- SIDEBAR -->
-  <nav class="sidebar" id="sidebar" aria-label="Primary navigation">
-    <div class="sidebar-head">
-      <div class="brand-mark small"><span class="brand-glyph">S</span></div>
-      <span class="sidebar-title">Scheduler</span>
-      <button class="icon-btn sidebar-close" id="sidebar-close" aria-label="Close menu">✕</button>
     </div>
-    <ul class="nav-list">
-      <li><a href="#dashboard" class="nav-link" data-section="dashboard"><span class="nav-ico">🏠</span>Dashboard</a></li>
-      <li><a href="#timetable" class="nav-link" data-section="timetable"><span class="nav-ico">🗓</span>Timetable</a></li>
-      <li><a href="#generate" class="nav-link" data-section="generate"><span class="nav-ico">⚙️</span>Generate Timetable</a></li>
-      <li><a href="#classes" class="nav-link" data-section="classes"><span class="nav-ico">🎓</span>Classes</a></li>
-      <li><a href="#teachers" class="nav-link" data-section="teachers"><span class="nav-ico">🧑‍🏫</span>Teachers</a></li>
-      <li><a href="#subjects" class="nav-link" data-section="subjects"><span class="nav-ico">📘</span>Subjects</a></li>
-      <li><a href="#classrooms" class="nav-link" data-section="classrooms"><span class="nav-ico">🏛</span>Classrooms</a></li>
-      <li><a href="#calendar" class="nav-link" data-section="calendar"><span class="nav-ico">📅</span>Calendar</a></li>
-      <li><a href="#analytics" class="nav-link" data-section="analytics"><span class="nav-ico">📊</span>Analytics</a></li>
-      <li><a href="#announcements" class="nav-link" data-section="announcements"><span class="nav-ico">📣</span>Announcements</a></li>
-      <li><a href="#notifications" class="nav-link" data-section="notifications"><span class="nav-ico">🔔</span>Notifications <span class="pill pill-count hidden" id="sidebar-notif-count">0</span></a></li>
-      <li><a href="#audit" class="nav-link" data-section="audit"><span class="nav-ico">🕘</span>Audit Log</a></li>
-      <li><a href="#settings" class="nav-link" data-section="settings"><span class="nav-ico">⚙</span>Settings</a></li>
-    </ul>
-    <div class="sidebar-foot">
-      <button class="btn btn-ghost btn-block" id="logout-btn">Log out</button>
-    </div>
-  </nav>
+  </dialog>
 
-  <div class="app-main">
-    <!-- TOP HEADER -->
-    <header class="topbar">
-      <button class="icon-btn" id="sidebar-open" aria-label="Open menu">☰</button>
-      <div class="topbar-search">
-        <span aria-hidden="true">🔎</span>
-        <input type="search" id="global-search" placeholder='Ask the Scheduler — try "free rooms Monday 10am" or a teacher name' aria-label="Global and smart search" />
+  <!-- Confirmation Modal -->
+  <dialog id="modal-confirm" class="modal modal-sm">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <h2 id="modal-confirm-title">Please confirm</h2>
+        <button class="icon-btn" id="modal-confirm-close" aria-label="Close dialog">✕</button>
       </div>
-      <button class="btn btn-secondary cmdk-trigger" id="cmdk-open-btn" title="Open command palette">⌘K <span class="muted small">Quick actions</span></button>
-      <div class="topbar-actions">
-        <button class="icon-btn" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
-        <button class="icon-btn" id="notif-bell" aria-label="Notifications" title="Notifications">
-          🔔<span class="notif-dot hidden" id="notif-dot"></span>
-        </button>
-        <div class="profile-chip">
-          <div class="avatar" id="profile-avatar">A</div>
-          <div class="profile-meta">
-            <strong id="profile-name">Admin User</strong>
-            <span id="profile-role">Administrator</span>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <!-- GLOBAL SEARCH RESULTS DROPDOWN -->
-    <div id="search-results" class="search-results hidden"></div>
-
-    <main class="content" id="content">
-
-      <!-- DASHBOARD -->
-      <section class="page" id="section-dashboard" data-page="dashboard">
-        <div class="page-head">
-          <div>
-            <h1>Dashboard</h1>
-            <p class="muted">Overview of your institution's scheduling health</p>
-          </div>
-          <div class="page-head-actions">
-            <span class="badge badge-soft" id="dash-date"></span>
-          </div>
-        </div>
-
-        <div class="stat-grid" id="stat-grid"></div>
-
-        <div class="card health-card">
-          <div class="card-head">
-            <h2>Timetable Health Score</h2>
-            <span class="muted small">Conflict-free rate + teacher workload balance + room-usage balance</span>
-          </div>
-          <div class="health-body" id="health-body"></div>
-        </div>
-
-        <div class="dash-grid">
-          <div class="card">
-            <div class="card-head">
-              <h2>Today's Classes</h2>
-              <span class="muted small" id="today-label"></span>
-            </div>
-            <div id="today-classes-list" class="list-simple"></div>
-          </div>
-          <div class="card">
-            <div class="card-head">
-              <h2>Upcoming Classes</h2>
-              <span class="muted small">Next on the schedule</span>
-            </div>
-            <div id="upcoming-classes-list" class="list-simple"></div>
-          </div>
-          <div class="card">
-            <div class="card-head">
-              <h2>Conflicts</h2>
-              <span class="muted small" id="conflict-count-label"></span>
-            </div>
-            <div id="dash-conflicts-list" class="list-simple"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- TIMETABLE -->
-      <section class="page hidden" id="section-timetable" data-page="timetable">
-        <div class="page-head">
-          <div>
-            <h1>Timetable Management</h1>
-            <p class="muted">Full weekly grid with clash-aware editing — drag any class onto a new day/slot to reschedule it</p>
-          </div>
-          <div class="page-head-actions">
-            <button class="btn btn-secondary" id="tt-print-btn">🖨 Print</button>
-            <button class="btn btn-secondary" id="tt-export-btn">⬇ Export CSV</button>
-            <button class="btn btn-secondary" id="tt-export-ics-btn">📅 Export to Calendar</button>
-            <button class="btn btn-primary" id="tt-add-btn">+ Add Entry</button>
-          </div>
-        </div>
-
-        <div class="filter-bar card">
-          <div class="field-inline">
-            <label for="filter-class">Class</label>
-            <select id="filter-class"><option value="">All classes</option></select>
-          </div>
-          <div class="field-inline">
-            <label for="filter-teacher">Teacher</label>
-            <select id="filter-teacher"><option value="">All teachers</option></select>
-          </div>
-          <div class="field-inline">
-            <label for="filter-room">Room</label>
-            <select id="filter-room"><option value="">All rooms</option></select>
-          </div>
-          <div class="field-inline">
-            <label for="filter-day">Day</label>
-            <select id="filter-day"><option value="">All days</option></select>
-          </div>
-          <div class="field-inline field-inline-search">
-            <label for="tt-search">Search</label>
-            <input type="search" id="tt-search" placeholder="Search timetable..." />
-          </div>
-          <button class="btn btn-ghost" id="tt-clear-filters">Clear</button>
-        </div>
-
-        <div class="card table-card">
-          <div class="table-scroll">
-            <table class="grid-table" id="timetable-grid" aria-label="Weekly timetable grid"></table>
-          </div>
-          <p class="empty-state hidden" id="timetable-empty">No timetable entries match your filters yet.</p>
-        </div>
-      </section>
-
-      <!-- GENERATE TIMETABLE -->
-      <section class="page hidden" id="section-generate" data-page="generate">
-        <div class="page-head">
-          <div>
-            <h1>Automatic Timetable Generator</h1>
-            <p class="muted">Pick a class, its subjects &amp; rooms — the engine finds a clash-free layout</p>
-          </div>
-        </div>
-
-        <div class="card generate-card">
-          <form id="generate-form">
-            <div class="field">
-              <label for="gen-class">Class / Section</label>
-              <select id="gen-class" required></select>
-            </div>
-
-            <div class="field">
-              <label>Subjects to schedule (select subjects, assign a teacher for each)</label>
-              <div id="gen-subject-list" class="gen-subject-list"></div>
-            </div>
-
-            <div class="field">
-              <label for="gen-rooms">Available rooms for this class</label>
-              <select id="gen-rooms" multiple size="6"></select>
-              <small class="muted">Hold Ctrl / Cmd to select multiple rooms</small>
-            </div>
-
-            <div class="field">
-              <label for="gen-periods">Max periods per day for this class</label>
-              <input type="number" id="gen-periods" min="1" max="7" value="7" required />
-            </div>
-
-            <button type="submit" class="btn btn-primary">Generate Timetable</button>
-          </form>
-
-          <div id="generate-result" class="generate-result hidden"></div>
-        </div>
-      </section>
-
-      <!-- CLASSES -->
-      <section class="page hidden" id="section-classes" data-page="classes">
-        <div class="page-head">
-          <div><h1>Class Management</h1><p class="muted">Programs, sections and enrolled strength</p></div>
-          <div class="page-head-actions">
-            <input type="search" class="input-inline" id="class-search" placeholder="Search classes..." />
-            <button class="btn btn-primary" id="class-add-btn">+ Add Class</button>
-          </div>
-        </div>
-        <div class="card-grid" id="classes-grid"></div>
-        <p class="empty-state hidden" id="classes-empty">No classes yet. Add your first class or section.</p>
-      </section>
-
-      <!-- TEACHERS -->
-      <section class="page hidden" id="section-teachers" data-page="teachers">
-        <div class="page-head">
-          <div><h1>Teacher Management</h1><p class="muted">Faculty, departments and availability</p></div>
-          <div class="page-head-actions">
-            <input type="search" class="input-inline" id="teacher-search" placeholder="Search teachers..." />
-            <select class="input-inline" id="teacher-dept-filter"><option value="">All departments</option></select>
-            <button class="btn btn-secondary" id="teacher-absence-btn">🩺 Report Absence</button>
-            <button class="btn btn-primary" id="teacher-add-btn">+ Add Teacher</button>
-          </div>
-        </div>
-        <div class="card table-card">
-          <div class="table-scroll">
-            <table class="data-table" id="teachers-table">
-              <thead>
-                <tr><th>ID</th><th>Name</th><th>Department</th><th>Subjects</th><th>Available days</th><th>Actions</th></tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-          <p class="empty-state hidden" id="teachers-empty">No teachers found.</p>
-        </div>
-      </section>
-
-      <!-- SUBJECTS -->
-      <section class="page hidden" id="section-subjects" data-page="subjects">
-        <div class="page-head">
-          <div><h1>Subject Management</h1><p class="muted">Courses, codes and weekly period load</p></div>
-          <div class="page-head-actions">
-            <input type="search" class="input-inline" id="subject-search" placeholder="Search subjects..." />
-            <button class="btn btn-primary" id="subject-add-btn">+ Add Subject</button>
-          </div>
-        </div>
-        <div class="card table-card">
-          <div class="table-scroll">
-            <table class="data-table" id="subjects-table">
-              <thead><tr><th>Code</th><th>Subject</th><th>Faculty</th><th>Weekly periods</th><th>Actions</th></tr></thead>
-              <tbody></tbody>
-            </table>
-          </div>
-          <p class="empty-state hidden" id="subjects-empty">No subjects found.</p>
-        </div>
-      </section>
-
-      <!-- CLASSROOMS -->
-      <section class="page hidden" id="section-classrooms" data-page="classrooms">
-        <div class="page-head">
-          <div><h1>Classroom Management</h1><p class="muted">Rooms, labs and halls with live availability</p></div>
-          <div class="page-head-actions">
-            <input type="search" class="input-inline" id="room-search" placeholder="Search rooms..." />
-            <button class="btn btn-primary" id="room-add-btn">+ Add Room</button>
-          </div>
-        </div>
-        <div class="card-grid" id="rooms-grid"></div>
-        <p class="empty-state hidden" id="rooms-empty">No rooms yet.</p>
-      </section>
-
-      <!-- CALENDAR -->
-      <section class="page hidden" id="section-calendar" data-page="calendar">
-        <div class="page-head">
-          <div><h1>Weekly Calendar</h1><p class="muted">Visual week-by-week view of scheduled classes</p></div>
-          <div class="page-head-actions">
-            <button class="btn btn-secondary" id="cal-prev">← Previous</button>
-            <button class="btn btn-secondary" id="cal-today">This week</button>
-            <button class="btn btn-secondary" id="cal-next">Next →</button>
-          </div>
-        </div>
-        <div class="card">
-          <div class="cal-range" id="cal-range-label"></div>
-          <div class="table-scroll">
-            <table class="grid-table" id="calendar-grid" aria-label="Calendar week view"></table>
-          </div>
-        </div>
-      </section>
-
-      <!-- ANALYTICS -->
-      <section class="page hidden" id="section-analytics" data-page="analytics">
-        <div class="page-head">
-          <div><h1>Timetable Analytics</h1><p class="muted">Utilisation, workload and conflict insight</p></div>
-        </div>
-        <div class="dash-grid">
-          <div class="card">
-            <div class="card-head"><h2>Teacher workload</h2><span class="muted small">Periods / week</span></div>
-            <div id="chart-teacher-load" class="bar-chart"></div>
-          </div>
-          <div class="card">
-            <div class="card-head"><h2>Classes per day</h2><span class="muted small">Across the week</span></div>
-            <div id="chart-classes-day" class="bar-chart"></div>
-          </div>
-          <div class="card">
-            <div class="card-head"><h2>Subject distribution</h2><span class="muted small">Total periods scheduled</span></div>
-            <div id="chart-subject-dist" class="bar-chart"></div>
-          </div>
-        </div>
-        <div class="dash-grid">
-          <div class="card">
-            <div class="card-head"><h2>Room utilisation</h2><span class="muted small">Most → least occupied</span></div>
-            <div id="chart-room-usage" class="bar-chart"></div>
-          </div>
-          <div class="card">
-            <div class="card-head"><h2>Free rooms right now (by slot pattern)</h2></div>
-            <div id="analytics-free-rooms" class="list-simple"></div>
-          </div>
-          <div class="card">
-            <div class="card-head"><h2>Conflict summary</h2></div>
-            <div id="analytics-conflicts" class="list-simple"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ANNOUNCEMENTS -->
-      <section class="page hidden" id="section-announcements" data-page="announcements">
-        <div class="page-head">
-          <div><h1>Announcements</h1><p class="muted">Broadcast schedule changes to staff and students</p></div>
-          <div class="page-head-actions">
-            <button class="btn btn-primary" id="announcement-add-btn">+ New Announcement</button>
-          </div>
-        </div>
-        <div id="announcements-list" class="announce-list"></div>
-        <p class="empty-state hidden" id="announcements-empty">No announcements yet.</p>
-      </section>
-
-      <!-- NOTIFICATIONS -->
-      <section class="page hidden" id="section-notifications" data-page="notifications">
-        <div class="page-head">
-          <div><h1>Notifications</h1><p class="muted">System activity, clashes and updates</p></div>
-          <div class="page-head-actions">
-            <button class="btn btn-secondary" id="notif-mark-all">Mark all as read</button>
-            <button class="btn btn-ghost" id="notif-clear-all">Clear all</button>
-          </div>
-        </div>
-        <div id="notifications-list" class="notif-list"></div>
-        <p class="empty-state hidden" id="notifications-empty">You're all caught up — no notifications.</p>
-      </section>
-
-      <!-- AUDIT LOG -->
-      <section class="page hidden" id="section-audit" data-page="audit">
-        <div class="page-head">
-          <div><h1>Audit Log</h1><p class="muted">Who changed what, and when — every create, edit, delete and override</p></div>
-          <div class="page-head-actions">
-            <select class="input-inline" id="audit-action-filter">
-              <option value="">All actions</option>
-              <option value="create">Created</option>
-              <option value="update">Updated</option>
-              <option value="delete">Deleted</option>
-              <option value="override">Overridden</option>
-              <option value="generate">Generated</option>
-              <option value="substitute">Substitute</option>
-            </select>
-            <input type="search" class="input-inline" id="audit-search" placeholder="Search audit log..." />
-            <button class="btn btn-ghost" id="audit-clear-btn">Clear log</button>
-          </div>
-        </div>
-        <div id="audit-list" class="audit-list"></div>
-        <p class="empty-state hidden" id="audit-empty">No activity recorded yet — actions you take will show up here.</p>
-      </section>
-
-      <!-- SETTINGS -->
-      <section class="page hidden" id="section-settings" data-page="settings">
-        <div class="page-head">
-          <div><h1>Settings</h1><p class="muted">Personalise your workspace</p></div>
-        </div>
-        <div class="card settings-card">
-          <h2>Appearance</h2>
-          <div class="field-row">
-            <span>Theme</span>
-            <div class="segmented" id="theme-segmented">
-              <button type="button" data-theme="light" class="seg-btn">☀ Light</button>
-              <button type="button" data-theme="dark" class="seg-btn">🌙 Dark</button>
-            </div>
-          </div>
-        </div>
-        <div class="card settings-card">
-          <h2>Profile</h2>
-          <form id="profile-form">
-            <div class="field">
-              <label for="settings-name">Display name</label>
-              <input type="text" id="settings-name" required />
-            </div>
-            <div class="field">
-              <label for="settings-role">Role</label>
-              <input type="text" id="settings-role" required />
-            </div>
-            <button type="submit" class="btn btn-primary">Save profile</button>
-          </form>
-        </div>
-        <div class="card settings-card">
-          <h2>Data</h2>
-          <p class="muted">All data is stored locally in this browser via <code>localStorage</code>. Nothing is sent to a server.</p>
-          <div class="field-row">
-            <button class="btn btn-secondary" id="settings-export-all">Export all data (JSON)</button>
-            <button class="btn btn-danger" id="settings-reset-all">Reset to demo data</button>
-          </div>
-        </div>
-      </section>
-
-    </main>
-
-    <footer class="app-footer">
-      <p>Smart Classroom &amp; Timetable Scheduler — runs entirely in your browser. No backend, no data leaves this device.</p>
-    </footer>
-  </div>
-</div>
-
-<div class="sidebar-scrim hidden" id="sidebar-scrim"></div>
-
-<!-- ============ MODALS ============ -->
-
-<dialog id="modal-form" class="modal">
-  <div class="modal-inner">
-    <div class="modal-head">
-      <h2 id="modal-form-title">Title</h2>
-      <button class="icon-btn" id="modal-form-close" aria-label="Close dialog">✕</button>
-    </div>
-    <form id="modal-form-el">
-      <div id="modal-form-body" class="modal-body"></div>
+      <p id="modal-confirm-text" class="modal-body-text"></p>
       <div class="modal-foot">
-        <button type="button" class="btn btn-ghost" id="modal-form-cancel">Cancel</button>
-        <button type="submit" class="btn btn-primary" id="modal-form-submit">Save</button>
+        <button type="button" class="btn btn-ghost" id="modal-confirm-cancel">Cancel</button>
+        <button type="button" class="btn btn-danger" id="modal-confirm-ok">Delete</button>
       </div>
-    </form>
-  </div>
-</dialog>
+    </div>
+  </dialog>
 
-<dialog id="modal-confirm" class="modal modal-sm">
-  <div class="modal-inner">
-    <div class="modal-head">
-      <h2 id="modal-confirm-title">Please confirm</h2>
-      <button class="icon-btn" id="modal-confirm-close" aria-label="Close dialog">✕</button>
+  <!-- Conflict Detection Dialog (Differentiates Hard Blocking Errors vs Soft Preferences) -->
+  <dialog id="modal-conflict" class="modal">
+    <div class="modal-inner" style="max-width: 580px;">
+      <div class="modal-head">
+        <h2 id="modal-conflict-heading">⚠️ Scheduling Feedback &amp; Constraints</h2>
+        <button class="icon-btn" id="modal-conflict-close" aria-label="Close dialog">✕</button>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:1rem; padding: 0.5rem 0;">
+        <!-- Blocking Errors Container -->
+        <div id="modal-conflict-errors-wrap" class="feedback-panel panel-danger">
+          <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+            <span style="font-size:1.15rem;">🛑</span>
+            <strong style="color:#ef4444; font-size:0.95rem;">Mandatory Constraints Violated (Scheduling Blocked)</strong>
+          </div>
+          <ul id="modal-conflict-list" class="conflict-list" style="margin:0; padding-left:1.25rem;"></ul>
+        </div>
+
+        <!-- Soft Warnings Container -->
+        <div id="modal-conflict-warnings-wrap" class="feedback-panel panel-warning hidden">
+          <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+            <span style="font-size:1.15rem;">💡</span>
+            <strong style="color:#f59e0b; font-size:0.95rem;">Scheduling Preference Warnings (Permitted)</strong>
+          </div>
+          <ul id="modal-warning-list" class="conflict-list" style="margin:0; padding-left:1.25rem; color:#fde68a;"></ul>
+        </div>
+
+        <p id="modal-conflict-note" class="muted small" style="margin:0;">
+          Hard constraints must be resolved to ensure clash-free university operation. Choose an alternate slot, classroom, or teacher.
+        </p>
+      </div>
+
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" id="modal-conflict-cancel">Cancel &amp; Adjust</button>
+        <button type="button" class="btn btn-warning hidden" id="modal-conflict-proceed-warnings">Proceed with Warnings</button>
+        <button type="button" class="btn btn-danger" id="modal-conflict-override">Admin Override &amp; Force Save</button>
+      </div>
     </div>
-    <p id="modal-confirm-text" class="modal-body-text"></p>
-    <div class="modal-foot">
-      <button type="button" class="btn btn-ghost" id="modal-confirm-cancel">Cancel</button>
-      <button type="button" class="btn btn-danger" id="modal-confirm-ok">Delete</button>
+  </dialog>
+
+  <!-- Edit Rule Config Modal (Admin) -->
+  <dialog id="modal-rule-config" class="modal modal-sm">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <h2 id="mrc-title">Configure Rule</h2>
+        <button class="icon-btn" id="mrc-close" aria-label="Close dialog">✕</button>
+      </div>
+      <form id="mrc-form">
+        <div class="modal-body">
+          <input type="hidden" id="mrc-key" />
+          <div class="field">
+            <label for="mrc-name">Rule Name</label>
+            <input type="text" id="mrc-name" required />
+          </div>
+          <div class="field">
+            <label for="mrc-desc">Description</label>
+            <textarea id="mrc-desc" rows="2"></textarea>
+          </div>
+          <div class="field">
+            <label for="mrc-mandatory">Enforcement Mode</label>
+            <select id="mrc-mandatory">
+              <option value="true">Mandatory (Hard Constraint / Blocking Error)</option>
+              <option value="false">Scheduling Preference (Soft Warning)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="mrc-status">Rule Status</label>
+            <select id="mrc-status">
+              <option value="true">Enabled (Active in Scheduler)</option>
+              <option value="false">Disabled (Ignored)</option>
+            </select>
+          </div>
+          <div class="field" id="mrc-config-val-wrap">
+            <label for="mrc-config-val" id="mrc-config-val-label">Threshold / Value</label>
+            <input type="number" id="mrc-config-val" />
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn btn-ghost" id="mrc-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Rule</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Substitute Teacher Recommendation Modal -->
+  <dialog id="modal-substitute" class="modal">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <h2>🩺 Report Absence &amp; Find Substitutes</h2>
+        <button class="icon-btn" id="modal-substitute-close" aria-label="Close dialog">✕</button>
+      </div>
+      <div class="field-grid">
+        <div class="field"><label for="sub-teacher">Absent Teacher</label><select id="sub-teacher"></select></div>
+        <div class="field"><label for="sub-day">Day</label><select id="sub-day"></select></div>
+      </div>
+      <div id="sub-results" class="sub-results"></div>
+    </div>
+  </dialog>
+
+  <!-- ============ MAKEUP CLASS SCHEDULING MODAL ============ -->
+  <dialog id="modal-makeup" class="modal modal-lg">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div>
+          <h2>⏰ Schedule Makeup Class</h2>
+          <span class="muted small">Arrange a replacement class for absent faculty, missed lectures, or university
+            holidays</span>
+        </div>
+        <button class="icon-btn" id="modal-makeup-close" aria-label="Close dialog">✕</button>
+      </div>
+
+      <form id="makeup-form" novalidate>
+        <input type="hidden" id="makeup-id" />
+        <!-- Step 1: Select Missed Class (Auto-populates) -->
+        <div class="card"
+          style="padding: 1rem; margin-bottom: 1.25rem; background: var(--bg-surface-2); border-color: rgba(99, 102, 241, 0.25);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+            <label for="makeup-orig-class" style="font-weight:700; color:var(--text-white); margin-bottom:0;">
+              📌 Step 1: Select Original / Missed Class (Auto-fills Course &amp; Faculty)
+            </label>
+            <span class="badge badge-warning">Makeup Workflow</span>
+          </div>
+          <select id="makeup-orig-class" class="input-block">
+            <option value="">-- Choose a missed class from timetable (or create independent) --</option>
+          </select>
+          <div id="makeup-orig-details" class="muted small" style="margin-top:0.5rem;">
+            Selecting a class pre-fills the program, section, subject and original teacher.
+          </div>
+        </div>
+
+        <!-- Step 2: Program, Course & Target Section -->
+        <div class="field-grid" style="margin-bottom: 1rem;">
+          <div class="field">
+            <label for="makeup-program">Academic Program</label>
+            <select id="makeup-program">
+              <option value="">Select program</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="makeup-class">Class</label>
+            <select id="makeup-class" required>
+              <option value="">Select class</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="makeup-section">Section</label>
+            <select id="makeup-section" required>
+              <option value="">Select section</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-grid" style="margin-bottom: 1rem;">
+          <div class="field">
+            <label for="makeup-subject">Subject</label>
+            <select id="makeup-subject" required>
+              <option value="">Select subject</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="makeup-orig-teacher">Original Faculty</label>
+            <select id="makeup-orig-teacher">
+              <option value="">Select original faculty</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="makeup-teacher">Makeup / Assigned Faculty</label>
+            <select id="makeup-teacher" required>
+              <option value="">Select faculty member</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Step 3: Date, Time & Classroom with Instant Availability Checker -->
+        <div class="card"
+          style="padding: 1rem; margin-bottom: 1.25rem; background: var(--bg-card); border-color: var(--border);">
+          <div style="font-weight:700; margin-bottom: 0.75rem; color:var(--text-white);">
+            📅 Step 3: Makeup Date, Time Slot &amp; Classroom Selection
+          </div>
+          <div class="field-grid">
+            <div class="field">
+              <label for="makeup-date">Makeup Date</label>
+              <input type="date" id="makeup-date" required />
+              <small class="muted" id="makeup-day-name">Calculates weekday automatically</small>
+            </div>
+            <div class="field">
+              <label for="makeup-slot">Time Slot</label>
+              <select id="makeup-slot" required></select>
+            </div>
+            <div class="field field-full">
+              <label for="makeup-room">Available Classroom</label>
+              <select id="makeup-room" required>
+                <option value="">Select a classroom</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Real-Time Availability Indicator Strip -->
+          <div id="makeup-avail-container" style="margin-top: 1rem;">
+            <div class="avail-badge-strip" id="makeup-avail-badges">
+              <span class="badge badge-soft" id="mk-badge-room">Room: Checking...</span>
+              <span class="badge badge-soft" id="mk-badge-teacher">Faculty: Checking...</span>
+              <span class="badge badge-soft" id="mk-badge-section">Section: Checking...</span>
+              <span class="badge badge-soft" id="mk-badge-capacity">Capacity: Checking...</span>
+            </div>
+            <div id="makeup-conflict-alert" class="conflict-alert hidden" style="margin-top: 0.75rem;"></div>
+            <div id="makeup-suggested-rooms" class="suggested-rooms-box hidden" style="margin-top: 0.75rem;"></div>
+            <div id="makeup-scheduled-box" style="margin-top: 0.75rem;"></div>
+          </div>
+        </div>
+
+        <!-- Step 4: Reason & Notes -->
+        <div class="field-grid" style="margin-bottom: 1rem;">
+          <div class="field">
+            <label for="makeup-reason">Reason for Makeup Class</label>
+            <select id="makeup-reason" required>
+              <option value="Teacher Absence" selected>Teacher Absence / Leave</option>
+              <option value="University Holiday">University Holiday / Campus Closure</option>
+              <option value="Exam Schedule Adjustment">Exam Schedule Adjustment</option>
+              <option value="Laboratory Extra Session">Laboratory Extra Practical Session</option>
+              <option value="Syllabus Completion / Revision">Syllabus Completion / Exam Revision</option>
+              <option value="Departmental Request">Departmental Rescheduling Request</option>
+              <option value="Other">Other Valid Reason</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="makeup-custom-reason">Specific Details / Notes</label>
+            <input type="text" id="makeup-custom-reason" placeholder="e.g., Medical leave makeup, Lab backlog, etc." />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="makeup-notes">Instructions / Notice for Students</label>
+          <textarea id="makeup-notes" rows="2"
+            placeholder="Provide any special instructions, room instructions, or materials needed for this makeup class..."></textarea>
+        </div>
+
+        <div class="modal-foot">
+          <button type="button" class="btn btn-ghost" id="modal-makeup-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="modal-makeup-submit">⏰ Schedule Makeup Class</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- ============ STUDY PLAN DETAILS MODAL ============ -->
+  <dialog id="modal-study-plan-details" class="modal modal-lg">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div>
+          <h2 id="spd-title">Study Plan Details</h2>
+          <span class="muted small" id="spd-subtitle">Degree Syllabus &amp; Course Roadmap</span>
+        </div>
+        <button class="icon-btn" id="modal-spd-close" aria-label="Close dialog">✕</button>
+      </div>
+
+      <div class="modal-body" id="spd-content" style="max-height: 70vh; overflow-y: auto;">
+        <!-- Populated dynamically in script.js -->
+      </div>
+
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" id="modal-spd-cancel">Close</button>
+        <button type="button" class="btn btn-secondary" id="modal-spd-edit-btn">✏️ Edit Plan</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ============ STUDY PLAN CREATE / EDIT MODAL ============ -->
+  <dialog id="modal-study-plan-form" class="modal modal-lg">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div>
+          <h2 id="modal-spf-title">Create Study Plan</h2>
+          <span class="muted small">Define academic degree curriculum, semester modules, and course objectives</span>
+        </div>
+        <button class="icon-btn" id="modal-spf-close" aria-label="Close dialog">✕</button>
+      </div>
+
+      <form id="study-plan-form-el" novalidate>
+        <input type="hidden" id="spf-id" />
+
+        <div class="field">
+          <label for="spf-title">Study Plan Title</label>
+          <input type="text" id="spf-title" placeholder="e.g., B.Tech CS - Database Systems &amp; Architecture Roadmap"
+            required />
+        </div>
+
+        <div class="field-grid">
+          <div class="field">
+            <label for="spf-program">Program</label>
+            <select id="spf-program" required>
+              <option value="">Select Program</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="spf-dept">Department</label>
+            <select id="spf-dept">
+              <option value="">Select Department</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-grid">
+          <div class="field">
+            <label for="spf-semester">Semester</label>
+            <select id="spf-semester" required>
+              <option value="1">Semester 1</option>
+              <option value="2">Semester 2</option>
+              <option value="3">Semester 3</option>
+              <option value="4">Semester 4</option>
+              <option value="5">Semester 5</option>
+              <option value="6">Semester 6</option>
+              <option value="7">Semester 7</option>
+              <option value="8">Semester 8</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="spf-subject">Subject</label>
+            <select id="spf-subject" required>
+              <option value="">Select Subject</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-grid">
+          <div class="field">
+            <label for="spf-teacher">Faculty In-Charge</label>
+            <select id="spf-teacher">
+              <option value="">Select Faculty Member</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="spf-year">Academic Year</label>
+            <input type="text" id="spf-year" value="2026-27" required />
+          </div>
+          <div class="field">
+            <label for="spf-credits">Credits</label>
+            <input type="number" id="spf-credits" min="1" max="10" value="4" required />
+          </div>
+          <div class="field">
+            <label for="spf-status">Status</label>
+            <select id="spf-status">
+              <option value="Active" selected>Active</option>
+              <option value="Draft">Draft</option>
+              <option value="Archived">Archived</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="spf-desc">Course Overview &amp; Description</label>
+          <textarea id="spf-desc" rows="3"
+            placeholder="Provide a detailed overview of what students will study in this plan..."></textarea>
+        </div>
+
+        <div class="field">
+          <label for="spf-objectives">Learning Objectives</label>
+          <textarea id="spf-objectives" rows="3"
+            placeholder="Numbered or bulleted list of competencies and course outcomes..."></textarea>
+        </div>
+
+        <div class="field">
+          <label for="spf-modules">Curriculum Modules / Weekly Units (One per line: Unit Name | Topic |
+            Duration)</label>
+          <textarea id="spf-modules" rows="4"
+            placeholder="Unit 1 | Core Relational Architecture | 3 Weeks&#10;Unit 2 | Advanced SQL &amp; Normalization | 4 Weeks&#10;Unit 3 | Transactions &amp; ACID Concurrency | 3 Weeks&#10;Unit 4 | Distributed Storage &amp; NoSQL | 4 Weeks"></textarea>
+          <small class="muted">Format: Unit Name | Topic Title | Duration (e.g. Unit 1 | Introduction | 3 Weeks)</small>
+        </div>
+
+        <div class="modal-foot">
+          <button type="button" class="btn btn-ghost" id="modal-spf-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="modal-spf-submit">Save Study Plan</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- ============ MY PROFILE MODAL ============ -->
+  <dialog id="modal-my-profile" class="modal modal-md">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div>
+          <h2>User Profile</h2>
+          <span class="muted small">Account identity, active permissions, and university affiliation</span>
+        </div>
+        <button class="icon-btn" id="modal-my-profile-close" aria-label="Close dialog">✕</button>
+      </div>
+      <div class="modal-body profile-modal-card">
+        <div class="pm-hero">
+          <div class="pm-avatar-large" id="mp-avatar">A</div>
+          <div class="pm-hero-info">
+            <h3 id="mp-name">University Administrator</h3>
+            <p id="mp-email">admin@brightfield.edu</p>
+            <div class="pm-badges">
+              <span class="badge badge-info" id="mp-role-badge">ADMIN</span>
+              <span class="badge badge-success" id="mp-status-badge">Active</span>
+            </div>
+          </div>
+        </div>
+        <div class="pm-grid">
+          <div class="pm-field">
+            <div class="pm-label">Department / Unit</div>
+            <div class="pm-val" id="mp-dept">Academic Administration</div>
+          </div>
+          <div class="pm-field">
+            <div class="pm-label">Contact Phone</div>
+            <div class="pm-val" id="mp-phone">+1 (555) 019-2834</div>
+          </div>
+          <div class="pm-field">
+            <div class="pm-label">Last Login</div>
+            <div class="pm-val" id="mp-last-login">Just now</div>
+          </div>
+          <div class="pm-field">
+            <div class="pm-label">User Account ID</div>
+            <div class="pm-val" id="mp-user-id">USR-002</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" id="modal-my-profile-close-btn">Close</button>
+        <button type="button" class="btn btn-secondary" id="mp-open-change-pwd-btn">🔑 Change Password</button>
+        <button type="button" class="btn btn-primary" id="mp-open-edit-btn">✏️ Edit Profile</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ============ EDIT PROFILE MODAL ============ -->
+  <dialog id="modal-edit-profile" class="modal modal-md">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div>
+          <h2>Edit Profile</h2>
+          <span class="muted small">Update your personal account details</span>
+        </div>
+        <button class="icon-btn" id="modal-edit-profile-close" aria-label="Close dialog">✕</button>
+      </div>
+      <form id="edit-profile-form-el" novalidate>
+        <div class="modal-body">
+          <div class="field">
+            <label for="ep-name">Full Name</label>
+            <input type="text" id="ep-name" required />
+          </div>
+          <div class="field">
+            <label for="ep-email">Email Address</label>
+            <input type="email" id="ep-email" required />
+          </div>
+          <div class="field">
+            <label for="ep-phone">Phone Number</label>
+            <input type="tel" id="ep-phone" placeholder="+1 (555) 000-0000" />
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn btn-ghost" id="modal-edit-profile-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- ============ CHANGE PASSWORD MODAL ============ -->
+  <dialog id="modal-change-password" class="modal modal-sm">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div>
+          <h2>Change Password</h2>
+          <span class="muted small">Securely update your login credentials</span>
+        </div>
+        <button class="icon-btn" id="modal-change-pwd-close" aria-label="Close dialog">✕</button>
+      </div>
+      <form id="change-pwd-form-el" novalidate>
+        <div class="modal-body">
+          <div class="field">
+            <label for="cp-current">Current Password</label>
+            <div class="password-wrap">
+              <input type="password" id="cp-current" placeholder="Enter current password" required />
+              <button type="button" class="ghost-icon-btn toggle-pwd-btn" data-target="cp-current">👁</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="cp-new">New Password</label>
+            <div class="password-wrap">
+              <input type="password" id="cp-new" placeholder="At least 6 characters" minlength="6" required />
+              <button type="button" class="ghost-icon-btn toggle-pwd-btn" data-target="cp-new">👁</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="cp-confirm">Confirm New Password</label>
+            <div class="password-wrap">
+              <input type="password" id="cp-confirm" placeholder="Re-enter new password" minlength="6" required />
+              <button type="button" class="ghost-icon-btn toggle-pwd-btn" data-target="cp-confirm">👁</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn btn-ghost" id="modal-change-pwd-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Password</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- ============ ROLE & PERMISSIONS MODAL ============ -->
+  <dialog id="modal-role-permissions" class="modal modal-md">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div>
+          <h2>Role and Permissions</h2>
+          <span class="muted small" id="rp-role-title">Authenticated Privileges</span>
+        </div>
+        <button class="icon-btn" id="modal-role-perm-close" aria-label="Close dialog">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="rp-permissions-list" class="permissions-grid">
+          <!-- Populated dynamically based on role -->
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-primary" id="modal-role-perm-ok">Understood</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ============ LOGOUT CONFIRMATION MODAL ============ -->
+  <dialog id="modal-logout-confirm" class="modal modal-sm">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <h2>Confirm Logout</h2>
+        <button class="icon-btn" id="modal-logout-close" aria-label="Close dialog">✕</button>
+      </div>
+      <p class="modal-body-text">Are you sure you want to log out of StudyPlan? Your session token will be invalidated and you will be returned to the sign-in screen.</p>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" id="modal-logout-cancel">Cancel</button>
+        <button type="button" class="btn btn-danger" id="modal-logout-proceed">⎋ Sign Out</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ============ PROVISION TEACHER ACCOUNT MODAL ============ -->
+  <dialog id="modal-teacher-account-form" class="modal modal-md">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div>
+          <h2 id="ta-form-modal-title">Provision Teacher Account</h2>
+          <span class="muted small">Create credentials for an existing faculty member</span>
+        </div>
+        <button class="icon-btn" id="modal-ta-close" aria-label="Close dialog">✕</button>
+      </div>
+
+      <!-- Inline Alert / Error Notice -->
+      <div id="ta-modal-alert" class="hidden" style="margin: 0.75rem 1.25rem 0; padding: 0.75rem 1rem; border-radius: var(--radius-sm); font-size: 0.85rem; line-height: 1.4;"></div>
+
+      <!-- Dynamic State Container (Loading / Verified Empty / Error States) -->
+      <div id="ta-modal-state-container" class="hidden" style="padding: 1.5rem; text-align: center;"></div>
+
+      <form id="ta-form-el" autocomplete="off" novalidate>
+        <div class="modal-body" id="ta-modal-body">
+          <div class="field">
+            <label for="ta-select-teacher">Select Faculty Member <span style="color:var(--danger);">*</span></label>
+            <select id="ta-select-teacher" required autocomplete="off">
+              <option value="">Select a teacher without an account...</option>
+            </select>
+            <small class="muted" id="ta-select-hint">Only faculty members without login credentials appear here.</small>
+          </div>
+          <div class="field">
+            <label for="ta-custom-email">Email Address <span style="color:var(--danger);">*</span></label>
+            <input type="email" id="ta-custom-email" placeholder="faculty@brightfield.edu" required autocomplete="off" />
+            <small class="muted">Populated automatically from the selected faculty member's record.</small>
+          </div>
+          <div class="field">
+            <label for="ta-custom-password">Temporary Password</label>
+            <div class="password-wrap">
+              <input type="text" id="ta-custom-password" placeholder="Leave blank to auto-generate secure password" autocomplete="new-password" />
+              <button type="button" class="btn btn-ghost-sm" id="ta-generate-pwd-btn" style="margin-left:0.5rem;">Generate</button>
+            </div>
+            <small class="muted">Minimum 6 characters. If left blank, a secure random password is generated.</small>
+          </div>
+        </div>
+        <div class="modal-foot" id="ta-modal-foot">
+          <button type="button" class="btn btn-ghost" id="modal-ta-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="modal-ta-submit">Create Account</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- ============ RESET TEACHER PASSWORD MODAL ============ -->
+  <dialog id="modal-teacher-reset-pwd" class="modal modal-sm">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div>
+          <h2>Reset Teacher Password</h2>
+          <span class="muted small" id="reset-pwd-teacher-name">Faculty Member</span>
+        </div>
+        <button class="icon-btn" id="modal-reset-pwd-close" aria-label="Close dialog">✕</button>
+      </div>
+      <form id="reset-pwd-form-el" novalidate>
+        <input type="hidden" id="reset-pwd-teacher-id" />
+        <div class="modal-body">
+          <p class="modal-body-text">A new secure password will be assigned to this teacher's account.</p>
+          <div class="field">
+            <label for="reset-pwd-input">New Password (optional)</label>
+            <input type="text" id="reset-pwd-input" placeholder="Leave empty for auto-generated password" />
+          </div>
+          <div id="reset-pwd-result" class="hidden">
+            <div class="credentials-box">
+              <div class="credentials-row">
+                <span class="credentials-label">New Password:</span>
+                <span class="credentials-value" id="reset-pwd-val"></span>
+              </div>
+            </div>
+            <button type="button" class="btn btn-secondary btn-block" id="copy-reset-pwd-btn">📋 Copy Credentials</button>
+          </div>
+        </div>
+        <div class="modal-foot" id="reset-pwd-actions">
+          <button type="button" class="btn btn-ghost" id="modal-reset-pwd-cancel">Cancel</button>
+          <button type="submit" class="btn btn-danger">Confirm Reset</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- ============ BATCH PROVISION WIZARD MODAL ============ -->
+  <dialog id="modal-batch-provision" class="modal modal-lg">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div>
+          <h2>⚡ Batch Account Provisioning Wizard</h2>
+          <span class="muted small">Create login accounts for all teachers who do not have one yet</span>
+        </div>
+        <button class="icon-btn" id="modal-batch-close" aria-label="Close dialog">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="batch-step-confirm">
+          <p class="modal-body-text">This automated process will safely generate unique email addresses and secure initial passwords for all teachers missing login credentials. Existing accounts will not be affected.</p>
+          <div class="field-grid" style="margin: 1rem 0;">
+            <div class="field">
+              <label for="batch-dept-select">Department (Optional Filter)</label>
+              <select id="batch-dept-select">
+                <option value="">All Departments</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="batch-limit-select">Batch Size</label>
+              <select id="batch-limit-select">
+                <option value="50" selected>Next 50 Teachers</option>
+                <option value="100">Next 100 Teachers</option>
+                <option value="250">Next 250 Teachers</option>
+                <option value="500">Next 500 Teachers</option>
+              </select>
+            </div>
+          </div>
+          <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:var(--radius-sm); padding:0.85rem; font-size:0.84rem; color:#fde68a;">
+            ⚠️ Each account will be assigned a random secure password and the role <strong>TEACHER</strong>. You will be able to review and export the credentials immediately after generation.
+          </div>
+        </div>
+        <div id="batch-step-results" class="hidden">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+            <strong id="batch-results-heading" style="color:var(--success);">✅ Created Accounts</strong>
+            <button type="button" class="btn btn-secondary btn-sm" id="batch-export-csv-btn">📥 Export CSV / Copy</button>
+          </div>
+          <div class="table-scroll" style="max-height: 320px; overflow-y: auto;">
+            <table class="data-table" id="batch-results-table">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Teacher Name</th>
+                  <th>Assigned Email</th>
+                  <th>Initial Password</th>
+                </tr>
+              </thead>
+              <tbody id="batch-results-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" id="modal-batch-cancel">Close</button>
+        <button type="button" class="btn btn-primary" id="modal-batch-start-btn">⚡ Begin Provisioning</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Delete Timetable Scope Modal -->
+  <dialog id="modal-delete-timetable" class="modal modal-md">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <h2>🗑 Delete Timetable</h2>
+        <button class="icon-btn" id="modal-del-tt-close" aria-label="Close dialog">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="color:var(--text-muted); margin-bottom:1.25rem;">
+          Choose whether to delete the entire academic timetable or clear the schedule for a specific class.
+        </p>
+        <div class="field" style="margin-bottom:1rem;">
+          <label style="font-weight:600; display:block; margin-bottom:0.5rem;">Delete Scope</label>
+          <div style="display:flex; flex-direction:column; gap:0.6rem;">
+            <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+              <input type="radio" name="del-tt-scope" value="class" checked id="del-tt-scope-class" />
+              <span><strong>Delete for specific class</strong> (keeps other classes intact)</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+              <input type="radio" name="del-tt-scope" value="all" id="del-tt-scope-all" />
+              <span><strong style="color:var(--danger, #ef4444);">Delete ENTIRE timetable</strong> (clears all scheduled classes)</span>
+            </label>
+          </div>
+        </div>
+        <div class="field" id="del-tt-class-wrap">
+          <label for="del-tt-class-select">Select Class</label>
+          <select id="del-tt-class-select" class="input-inline" style="width:100%;"></select>
+        </div>
+        <div style="margin-top:1rem; padding:0.75rem 1rem; border-radius:var(--radius-sm); background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); font-size:0.83rem; color:#fca5a5;">
+          ⚠️ <strong>Warning:</strong> This action cannot be undone. All selected timetable sessions will be permanently deleted.
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" id="modal-del-tt-cancel">Cancel</button>
+        <button type="button" class="btn btn-danger" id="modal-del-tt-confirm">Confirm &amp; Delete</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Command Palette -->
+  <div id="cmdk-overlay" class="cmdk-overlay hidden" role="dialog" aria-label="Command palette" aria-modal="true">
+    <div class="cmdk-box">
+      <div class="cmdk-input-wrap">
+        <span aria-hidden="true" style="color:var(--primary-purple);">⌘</span>
+        <input type="text" id="cmdk-input"
+          placeholder="Type a command or jump to page... (e.g. 'add teacher', 'calendar', 'timetable')"
+          autocomplete="off" />
+        <kbd>Esc</kbd>
+      </div>
+      <ul id="cmdk-list" class="cmdk-list"></ul>
     </div>
   </div>
-</dialog>
 
-<dialog id="modal-conflict" class="modal modal-sm">
-  <div class="modal-inner">
-    <div class="modal-head">
-      <h2>⚠ Scheduling Conflict Detected</h2>
-      <button class="icon-btn" id="modal-conflict-close" aria-label="Close dialog">✕</button>
-    </div>
-    <p class="modal-body-text">Saving this entry causes the following clash(es):</p>
-    <ul id="modal-conflict-list" class="conflict-list"></ul>
-    <p class="muted small">You can cancel and change the slot/room/teacher, or override and save anyway (not recommended).</p>
-    <div class="modal-foot">
-      <button type="button" class="btn btn-ghost" id="modal-conflict-cancel">Cancel</button>
-      <button type="button" class="btn btn-danger" id="modal-conflict-override">Override &amp; Save</button>
-    </div>
-  </div>
-</dialog>
-
-<dialog id="modal-substitute" class="modal">
-  <div class="modal-inner">
-    <div class="modal-head">
-      <h2>🩺 Report Absence &amp; Find Substitutes</h2>
-      <button class="icon-btn" id="modal-substitute-close" aria-label="Close dialog">✕</button>
-    </div>
-    <div class="field-grid">
-      <div class="field"><label for="sub-teacher">Absent teacher</label><select id="sub-teacher"></select></div>
-      <div class="field"><label for="sub-day">Day</label><select id="sub-day"></select></div>
-    </div>
-    <div id="sub-results" class="sub-results"></div>
-  </div>
-</dialog>
-
-<!-- ============ COMMAND PALETTE ============ -->
-<div id="cmdk-overlay" class="cmdk-overlay hidden" role="dialog" aria-label="Command palette" aria-modal="true">
-  <div class="cmdk-box">
-    <div class="cmdk-input-wrap">
-      <span aria-hidden="true">⌘</span>
-      <input type="text" id="cmdk-input" placeholder="Type a command or search a page... (e.g. 'add teacher', 'dark mode', 'calendar')" autocomplete="off" />
-      <kbd>Esc</kbd>
-    </div>
-    <ul id="cmdk-list" class="cmdk-list"></ul>
-  </div>
-</div>
-
-<script src="script.js"></script>
+  <script src="script.js?v=2"></script>
 </body>
+
 </html>

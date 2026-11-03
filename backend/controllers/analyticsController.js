@@ -9,8 +9,7 @@ async function dashboard(req, res) {
             classes,
             subjects,
             rooms,
-            timetable,
-            conflicts
+            timetable
         ] = await Promise.all([
 
             pool.query(
@@ -35,11 +34,6 @@ async function dashboard(req, res) {
                 `SELECT COUNT(*)::int AS count
                  FROM rooms
                  WHERE is_active = TRUE`
-            ),
-
-            pool.query(
-                `SELECT COUNT(*)::int AS count
-                 FROM timetable`
             ),
 
             pool.query(

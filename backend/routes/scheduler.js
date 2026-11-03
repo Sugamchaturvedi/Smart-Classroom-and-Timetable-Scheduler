@@ -1,6 +1,6 @@
 const express = require("express");
 
-const authenticate = require("../middleware/auth");
+const { authenticate, requireAdmin } = require("../middleware/auth");
 
 const {
     generateTimetable
@@ -11,6 +11,7 @@ const router = express.Router();
 router.post(
     "/generate",
     authenticate,
+    requireAdmin,
     generateTimetable
 );
 

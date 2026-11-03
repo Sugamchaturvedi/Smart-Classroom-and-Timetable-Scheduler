@@ -1,8 +1,10 @@
-﻿const express = require("express");
+const express = require("express");
 const cors = require("cors");
-require("dotenv").config();
+const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const pool = require("./db");
+const { maintenanceMiddleware, validateMaintenanceConfig } = require("./middleware/maintenance");
 
 const app = express();
 
@@ -15,8 +17,13 @@ app.use(
 
 app.use(express.json({ limit: "5mb" }));
 
-app.get("/", (req, res) => {
+// Fail-closed maintenance-mode write-protection gate
+app.use(maintenanceMiddleware);
 
+app.use(express.static(path.join(__dirname, "../frontend")));
+app.use("/frontend", express.static(path.join(__dirname, "../frontend")));
+
+app.get("/api", (req, res) => {
     res.json({
         success: true,
         message: "Smart Classroom & Timetable Scheduler API",
@@ -51,6 +58,16 @@ app.get("/api/health", async (req, res) => {
 app.use(
     "/api/auth",
     require("./routes/auth")
+);
+
+app.use(
+    "/api/admin/teacher-accounts",
+    require("./routes/adminTeacherAccounts")
+);
+
+app.use(
+    "/api/teachers/me",
+    require("./routes/teachersMe")
 );
 
 app.use(
@@ -98,6 +115,17 @@ app.use(
     require("./routes/analytics")
 );
 
+app.use(
+    "/api/study-plans",
+    require("./routes/studyPlans")
+);
+
+app.use(
+    "/api/rules",
+    require("./routes/rules")
+);
+
+
 app.use((req, res) => {
 
     res.status(404).json({
@@ -106,11 +134,31 @@ app.use((req, res) => {
     });
 });
 
+app.use((err, req, res, next) => {
+    console.error("Unhandled API error:", err);
+    if (res.headersSent) {
+        return next(err);
+    }
+    res.status(err.status || 500).json({
+        success: false,
+        message: err.message && req.app.get("env") === "development" ? err.message : "Internal server error"
+    });
+});
+
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+if (require.main === module) {
+    const configError = validateMaintenanceConfig(process.env.MAINTENANCE_MODE);
+    if (configError) {
+        console.error(`[FATAL CONFIGURATION ERROR] ${configError} Server startup aborted.`);
+        process.exit(1);
+    }
 
-    console.log(
-        `Smart Scheduler API running on http://localhost:${PORT}`
-    );
-});
+    app.listen(PORT, () => {
+        console.log(
+            `Smart Scheduler API running on http://localhost:${PORT}`
+        );
+    });
+}
+
+module.exports = app;

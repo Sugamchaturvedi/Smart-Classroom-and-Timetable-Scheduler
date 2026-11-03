@@ -1,6 +1,6 @@
 const express = require("express");
 const pool = require("../db");
-const authenticate = require("../middleware/auth");
+const { authenticate, requireAdmin } = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -129,7 +129,7 @@ router.get("/:id", authenticate, async (req, res) => {
     }
 });
 
-router.post("/", authenticate, async (req, res) => {
+router.post("/", authenticate, requireAdmin, async (req, res) => {
 
     try {
 
@@ -181,7 +181,7 @@ router.post("/", authenticate, async (req, res) => {
     }
 });
 
-router.put("/:id", authenticate, async (req, res) => {
+router.put("/:id", authenticate, requireAdmin, async (req, res) => {
 
     try {
 
@@ -235,7 +235,7 @@ router.put("/:id", authenticate, async (req, res) => {
     }
 });
 
-router.delete("/:id", authenticate, async (req, res) => {
+router.delete("/:id", authenticate, requireAdmin, async (req, res) => {
 
     try {
 

@@ -1,6 +1,6 @@
 const express = require("express");
 const pool = require("../db");
-const authenticate = require("../middleware/auth");
+const { authenticate, requireAdmin } = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -69,7 +69,7 @@ router.get("/:id", authenticate, async (req, res) => {
     }
 });
 
-router.post("/", authenticate, async (req, res) => {
+router.post("/", authenticate, requireAdmin, async (req, res) => {
 
     try {
 

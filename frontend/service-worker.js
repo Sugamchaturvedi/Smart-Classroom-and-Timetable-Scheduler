@@ -1,11 +1,10 @@
-/* Minimal cache-first service worker so the Scheduler keeps working offline
-   once it has been opened once over http(s). Not used at all when the app
-   is opened directly as a file:// page — browsers only allow service
-   workers on http/https origins, so run it via a local server to try this
-   (e.g. `python -m http.server` in this folder, then open localhost). */
+/* Network-first service worker for Smart Classroom & Timetable Scheduler.
+   Ensures fresh app shell & scripts while providing offline resilience.
+   API endpoints (/api/) are NEVER cached by the service worker to prevent
+   stale authentication or directory race conditions. */
 
-const CACHE_NAME = "smart-scheduler-cache-v1";
-const APP_SHELL = ["./index.html", "./style.css", "./script.js", "./manifest.json"];
+const CACHE_NAME = "smart-scheduler-cache-v2";
+const APP_SHELL = ["./", "./index.html", "./style.css", "./script.js", "./manifest.json"];
 
 self.addEventListener("install", event => {
   event.waitUntil(
@@ -22,17 +21,22 @@ self.addEventListener("activate", event => {
 });
 
 self.addEventListener("fetch", event => {
-  if (event.request.method !== "GET") return;
+  // Never intercept non-GET or dynamic backend API calls
+  if (event.request.method !== "GET" || event.request.url.includes("/api/")) {
+    return;
+  }
+
+  // Network-first strategy for app shell resources:
+  // Always fetch fresh HTML/CSS/JS when online; fallback to cache if offline.
   event.respondWith(
-    caches.match(event.request).then(cached => {
-      if (cached) return cached;
-      return fetch(event.request)
-        .then(response => {
+    fetch(event.request)
+      .then(response => {
+        if (response && response.status === 200 && response.type === "basic") {
           const copy = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)).catch(() => {});
-          return response;
-        })
-        .catch(() => cached);
-    })
+        }
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
